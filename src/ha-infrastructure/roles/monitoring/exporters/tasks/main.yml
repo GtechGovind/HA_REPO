@@ -25,6 +25,12 @@
   notify: restart postgres-exporter
   when: "'db_nodes' in group_names"
 
+- name: Add Nginx VTS Exporter PPA
+  apt_repository:
+    repo: ppa:vbernat/nginx
+    state: present
+  when: "'app_nodes' in group_names"
+
 - name: Install nginx-vts-exporter
   apt:
     name: prometheus-nginx-vts-exporter

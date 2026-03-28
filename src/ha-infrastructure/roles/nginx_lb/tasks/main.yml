@@ -7,6 +7,17 @@
 #              - Integrates with Keepalived for high availability.
 # ==============================================================================
 
+- name: Add Nginx PPA
+  apt_repository:
+    repo: ppa:vbernat/nginx
+    state: present
+  register: ppa_added
+
+- name: Update apt cache after adding PPA
+  apt:
+    update_cache: yes
+  when: ppa_added.changed
+
 - name: Install Nginx
   apt:
     name:
