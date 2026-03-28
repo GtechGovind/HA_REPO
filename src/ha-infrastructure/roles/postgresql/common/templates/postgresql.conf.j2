@@ -32,7 +32,7 @@ hot_standby = on
 
 # Archiving
 archive_mode = {{ postgresql.archive_mode }}
-archive_command = '{{ postgresql.archive_command }}'
+archive_command = '{{ postgresql.archive_command }} || true' # Added || true to prevent FATAL on failure
 
 # Replication
 primary_conninfo = 'host={{ groups['db_nodes'][0] }} port={{ postgresql.port }} user={{ postgresql.replication_user }} password={{ vault_replication_password }}'

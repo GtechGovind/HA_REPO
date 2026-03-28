@@ -59,6 +59,29 @@
   notify: reload systemd
   when: false # Disabled: using cluster-specific services instead
 
+- name: Ensure postgres user has SSH directory
+  file:
+    path: /var/lib/postgresql/.ssh
+    state: directory
+    owner: postgres
+    group: postgres
+    mode: '0700'
+  when: postgresql_role == 'primary' or postgresql_role == 'standby'
+
+- name: Setup SSH for archiving (if rsync is used)
+  copy:
+    dest: /var/lib/postgresql/.ssh/config
+    content: |
+      Host backup-server
+        StrictHostKeyChecking no
+        User atek
+    owner: postgres
+    group: postgres
+    mode: '0600'
+  when: 
+    - (postgresql_role == 'primary' or postgresql_role == 'standby')
+    - "'rsync' in postgresql.archive_command"
+
 - name: Create PostgreSQL basic directories
   file:
     path: "{{ item }}"
