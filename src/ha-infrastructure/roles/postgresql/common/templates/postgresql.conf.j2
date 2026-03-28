@@ -1,5 +1,11 @@
 # PostgreSQL Configuration for HA Infrastructure
 
+# Debian/Ubuntu Standard Paths
+data_directory = '{{ postgresql.data_dir }}'
+hba_file = '/etc/postgresql/{{ postgresql.version }}/main/pg_hba.conf'
+ident_file = '/etc/postgresql/{{ postgresql.version }}/main/pg_ident.conf'
+external_pid_file = '/var/run/postgresql/{{ postgresql.version }}-main.pid'
+
 # Connections
 listen_addresses = '*'
 port = {{ postgresql.port }}
