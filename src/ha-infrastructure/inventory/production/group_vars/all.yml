@@ -75,7 +75,7 @@ monitoring:
     - email: "support@atekpayments.com"
   node_exporter_port: 9100
   postgres_exporter_port: 9187
-  nginx_vts_exporter_port: 9113
+  nginx_exporter_port: 9113
   promtail_port: 9080
   loki_port: 3100
   pgbouncer_exporter_port: 9127
@@ -106,7 +106,7 @@ security:
     - { port: '{{ monitoring.alertmanager_port }}', proto: tcp, comment: 'Alertmanager' }
     - { port: '{{ monitoring.node_exporter_port }}', proto: tcp, comment: 'Node Exporter' }
     - { port: '{{ monitoring.postgres_exporter_port }}', proto: tcp, comment: 'PostgreSQL Exporter' }
-    - { port: '{{ monitoring.nginx_vts_exporter_port }}', proto: tcp, comment: 'Nginx VTS Exporter' }
+    - { port: '{{ monitoring.nginx_exporter_port }}', proto: tcp, comment: 'Nginx Exporter' }
     - { port: '{{ monitoring.pgbouncer_exporter_port }}', proto: tcp, comment: 'PgBouncer Exporter' }
     - { port: '{{ monitoring.promtail_port }}', proto: tcp, comment: 'Promtail' }
     - { port: '8000', proto: tcp, comment: 'Health Check Endpoint' }

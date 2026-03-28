@@ -25,5 +25,5 @@ scrape_configs:
     static_configs:
       - targets:
 {% for host in groups['app_nodes'] %}
-        - '{{ hostvars[host].ansible_host }}:{{ monitoring.nginx_vts_exporter_port }}'
+        - '{{ hostvars[host].ansible_host }}:{{ monitoring.nginx_exporter_port }}'
 {% endfor %}

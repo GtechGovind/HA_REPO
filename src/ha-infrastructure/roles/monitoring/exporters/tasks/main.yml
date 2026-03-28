@@ -25,17 +25,12 @@
   notify: restart postgres-exporter
   when: "'db_nodes' in group_names"
 
-- name: Add Nginx VTS Exporter PPA
-  apt_repository:
-    repo: ppa:vbernat/nginx
-    state: present
-  when: "'app_nodes' in group_names"
-
-- name: Install nginx-vts-exporter
+- name: Install nginx-exporter
   apt:
-    name: prometheus-nginx-vts-exporter
+    name: prometheus-nginx-exporter
     state: present
   when: "'app_nodes' in group_names"
+  notify: restart nginx-exporter
 
 - name: Ensure exporters are started and enabled
   systemd:
@@ -45,5 +40,5 @@
   loop:
     - { name: 'prometheus-node-exporter', when: true }
     - { name: 'prometheus-postgres-exporter', when: "'db_nodes' in group_names" }
-    - { name: 'prometheus-nginx-vts-exporter', when: "'app_nodes' in group_names" }
+    - { name: 'prometheus-nginx-exporter', when: "'app_nodes' in group_names" }
   when: item.when

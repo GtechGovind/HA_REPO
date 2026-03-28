@@ -2,3 +2,8 @@
   service:
     name: prometheus-postgres-exporter
     state: restarted
+
+- name: restart nginx-exporter
+  service:
+    name: prometheus-nginx-exporter
+    state: restarted
