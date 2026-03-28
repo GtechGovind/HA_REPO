@@ -42,15 +42,14 @@
     - /etc/postgresql/{{ postgresql.version }}/main/conf.d
 
 - name: Check if default PostgreSQL cluster exists
-  command: pg_lsclusters --no-header
-  register: pg_clusters
+  shell: pg_lsclusters --no-header | grep -q "{{ postgresql.version }} main"
+  register: pg_clusters_check
   changed_when: false
   failed_when: false
 
 - name: Drop default PostgreSQL cluster to avoid conflicts
   command: pg_dropcluster {{ postgresql.version }} main --stop
-  when: 
-    - pg_clusters.stdout is search(postgresql.version | string + " main")
+  when: pg_clusters_check.rc == 0
   ignore_errors: yes
 
 - name: Initialize PostgreSQL data directory

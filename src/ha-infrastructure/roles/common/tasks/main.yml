@@ -42,6 +42,15 @@
     dest: /etc/chrony/chrony.conf
   notify: restart chrony
 
+- name: Ensure hosts are resolvable via /etc/hosts
+  lineinfile:
+    path: /etc/hosts
+    line: "{{ hostvars[item].ansible_host }} {{ item }}"
+    regexp: ".* {{ item }}$"
+    state: present
+  loop: "{{ groups['all'] }}"
+  when: hostvars[item].ansible_host is defined
+
 - name: Configure system limits
   template:
     src: limits.conf.j2
