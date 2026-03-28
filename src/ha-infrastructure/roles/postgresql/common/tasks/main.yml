@@ -97,6 +97,21 @@
     - pg_clusters_check is defined
     - '"main" in pg_clusters_check.stdout'
 
+- name: Initialize PostgreSQL data directory
+  shell: |
+    pg_createcluster {{ postgresql.version }} main \
+    --start-conf=auto \
+    -d {{ postgresql.data_dir }} \
+    -- --waldir={{ postgresql.wal_dir }}
+  args:
+    creates: "{{ postgresql.data_dir }}/PG_VERSION"
+  when: postgresql_role == 'primary'
+  register: init_result
+  failed_when:
+    - init_result.rc != 0
+    - '"already exists" not in init_result.stderr'
+    - '"already exists" not in init_result.stdout'
+
 - name: Create PostgreSQL configuration directory
   file:
     path: "{{ item }}"
@@ -108,33 +123,6 @@
     - "/etc/postgresql/{{ postgresql.version }}/main"
     - "/etc/postgresql/{{ postgresql.version }}/main/conf.d"
   when: postgresql_role == 'primary'
-
-- name: Create PostgreSQL data and wal directories
-  file:
-    path: "{{ item }}"
-    state: directory
-    owner: postgres
-    group: postgres
-    mode: '0700'
-  loop:
-    - "{{ postgresql.data_dir }}"
-    - "{{ postgresql.wal_dir }}"
-  when: postgresql_role == 'primary'
-
-- name: Initialize PostgreSQL data directory
-  shell: |
-    pg_createcluster {{ postgresql.version }} main \
-    --start-conf=auto \
-    -d {{ postgresql.data_dir }} \
-    -- --waldir={{ postgresql.wal_dir }} || true
-  args:
-    creates: "{{ postgresql.data_dir }}/PG_VERSION"
-  when: postgresql_role == 'primary'
-  register: init_result
-  failed_when:
-    - init_result.rc != 0
-    - '"already exists" not in init_result.stderr'
-    - '"already exists" not in init_result.stdout'
 
 - name: Debug PostgreSQL data directory initialization
   debug:
@@ -174,14 +162,57 @@
 - name: Wait for PostgreSQL to be ready
   wait_for:
     port: "{{ postgresql.port }}"
-    host: 0.0.0.0
-    timeout: 60
+    host: 127.0.0.1
+    timeout: 90
   when: postgresql_role == 'primary'
+  register: wait_result
+  ignore_errors: yes
+
+- name: Diagnostic - Check PostgreSQL service status
+  systemd:
+    name: postgresql
+  register: pg_service_status
+  when: 
+    - postgresql_role == 'primary'
+    - wait_result is failed
+
+- name: Diagnostic - Debug PostgreSQL status
+  debug:
+    var: pg_service_status
+  when: 
+    - postgresql_role == 'primary'
+    - wait_result is failed
+
+- name: Diagnostic - Check PostgreSQL logs
+  shell: |
+    tail -n 50 /var/log/postgresql/postgresql-{{ postgresql.version }}-main.log || \
+    journalctl -u postgresql --no-pager -n 50
+  register: pg_logs_diag
+  when: 
+    - postgresql_role == 'primary'
+    - wait_result is failed
+  ignore_errors: yes
+
+- name: Diagnostic - Debug PostgreSQL logs
+  debug:
+    var: pg_logs_diag.stdout_lines
+  when: 
+    - postgresql_role == 'primary'
+    - wait_result is failed
+
+- name: Fail if PostgreSQL was not ready
+  fail:
+    msg: "PostgreSQL failed to become ready within timeout on localhost:{{ postgresql.port }}. Check the diagnostic logs above."
+  when: 
+    - postgresql_role == 'primary'
+    - wait_result is failed
 
 - name: Debug PostgreSQL readiness
   debug:
-    msg: "PostgreSQL is ready on localhost:5432"
-  when: postgresql_role == 'primary'
+    msg: "PostgreSQL is ready on localhost:{{ postgresql.port }}"
+  when: 
+    - postgresql_role == 'primary'
+    - wait_result is succeeded
 
 - name: Create replication user
   become_user: postgres
