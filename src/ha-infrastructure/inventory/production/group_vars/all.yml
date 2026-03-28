@@ -6,7 +6,7 @@
 # ==============================================================================
 
 # General Settings
-environment: production
+deployment_environment: production
 timezone: UTC
 ntp_servers:
   - 0.pool.ntp.org
