@@ -40,3 +40,10 @@
   command: repmgr -f /etc/postgresql/{{ postgresql.version }}/main/repmgr.conf standby register
   become_user: postgres
   when: postgresql_role == 'standby'
+
+- name: Verify standby health
+  become_user: postgres
+  command: pg_isready
+  register: pg_ready
+  changed_when: false
+  when: postgresql_role == 'standby'

@@ -41,6 +41,29 @@
     - /var/log/postgresql
     - /etc/postgresql/{{ postgresql.version }}/main/conf.d
 
+- name: Check if default PostgreSQL cluster exists
+  command: pg_lsclusters --no-header
+  register: pg_clusters
+  changed_when: false
+  failed_when: false
+
+- name: Drop default PostgreSQL cluster to avoid conflicts
+  command: pg_dropcluster {{ postgresql.version }} main --stop
+  when: 
+    - pg_clusters.stdout is search(postgresql.version | string + " main")
+    - postgresql_role == 'primary'
+  ignore_errors: yes
+
+- name: Initialize PostgreSQL data directory
+  command: |
+    pg_createcluster {{ postgresql.version }} main \
+    --start-conf=auto \
+    --pgdata={{ postgresql.data_dir }} \
+    --waldir={{ postgresql.wal_dir }}
+  args:
+    creates: "{{ postgresql.data_dir }}/PG_VERSION"
+  when: postgresql_role == 'primary'
+
 - name: Configure PostgreSQL
   template:
     src: postgresql.conf.j2
@@ -53,6 +76,13 @@
     dest: /etc/postgresql/{{ postgresql.version }}/main/pg_hba.conf
   notify: restart postgresql
 
+- name: Ensure PostgreSQL service is started and enabled
+  systemd:
+    name: postgresql
+    enabled: yes
+    state: started
+  when: postgresql_role == 'primary'
+
 - name: Create replication user
   become_user: postgres
   postgresql_user:
@@ -60,14 +90,4 @@
     password: "{{ vault_replication_password }}"
     role_attr_flags: REPLICATION,LOGIN
     state: present
-  when: postgresql_role == 'primary'
-
-- name: Initialize PostgreSQL data directory
-  command: |
-    pg_createcluster {{ postgresql.version }} main \
-    --start-conf=auto \
-    --pgdata={{ postgresql.data_dir }} \
-    --waldir={{ postgresql.wal_dir }}
-  args:
-    creates: "{{ postgresql.data_dir }}/PG_VERSION"
   when: postgresql_role == 'primary'

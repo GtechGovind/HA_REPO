@@ -43,9 +43,3 @@
     state: started
   when: postgresql_role == 'standby'
 
-- name: Verify standby health
-  become_user: postgres
-  command: pg_isready
-  register: pg_ready
-  changed_when: false
-  when: postgresql_role == 'standby'

@@ -6,12 +6,6 @@
 #              - Configures specific primary parameters if needed.
 # ==============================================================================
 
-- name: Ensure PostgreSQL service is started and enabled
-  systemd:
-    name: postgresql
-    enabled: yes
-    state: started
-  when: postgresql_role == 'primary'
 
 - name: Create replication slots (if configured)
   become_user: postgres
