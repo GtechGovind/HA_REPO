@@ -6,14 +6,6 @@
 #              - Manages standby-specific system settings.
 # ==============================================================================
 
-- name: Ensure PostgreSQL service is started and enabled on standby
-  systemd:
-    name: postgresql
-    enabled: yes
-    state: started
-  when: 
-    - postgresql_role == 'standby'
-    - false # Managed by repmgr role during initial setup
 
 - name: Copy auto-rebuild script
   copy:

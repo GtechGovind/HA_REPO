@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4e5b88f0-7383-45f3-a30a-4b5b1413df28" name="Changes" comment="Enhanced PostgreSQL initialization: updated `shell` usage to handle non-critical failures gracefully, refined existence checks for initialization output, and improved task conditions.">
+    <list default="true" id="4e5b88f0-7383-45f3-a30a-4b5b1413df28" name="Changes" comment="Enabled reinstallation and cleanup flags for infrastructure tasks in production environment.">
       <change beforePath="$PROJECT_DIR$/src/ha-infrastructure/roles/postgresql/common/tasks/main.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/ha-infrastructure/roles/postgresql/common/tasks/main.yml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -177,7 +177,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1774703992131</updated>
-      <workItem from="1774703993136" duration="14066000" />
+      <workItem from="1774703993136" duration="14447000" />
     </task>
     <task id="LOCAL-00001" summary="Refactored HA infrastructure requirements and production inventory file for improved clarity, reusability, and scalability">
       <option name="closed" value="true" />
@@ -323,7 +323,31 @@
       <option name="project" value="LOCAL" />
       <updated>1774720863346</updated>
     </task>
-    <option name="localTasksCounter" value="19" />
+    <task id="LOCAL-00019" summary="Enhanced PostgreSQL initialization: improved readiness checks with extended diagnostics, refined directory creation tasks, and adjusted wait conditions for robustness.">
+      <option name="closed" value="true" />
+      <created>1774721120865</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1774721120865</updated>
+    </task>
+    <task id="LOCAL-00020" summary="Added reinstallation and cleanup tasks across roles: implemented conditional configuration cleanup, extended data directory handling, and ensured safe reinitialization.">
+      <option name="closed" value="true" />
+      <created>1774721338543</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1774721338543</updated>
+    </task>
+    <task id="LOCAL-00021" summary="Enabled reinstallation and cleanup flags for infrastructure tasks in production environment.">
+      <option name="closed" value="true" />
+      <created>1774721391168</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1774721391168</updated>
+    </task>
+    <option name="localTasksCounter" value="22" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -348,6 +372,9 @@
     <MESSAGE value="Refined PostgreSQL configuration template: standardized `max` logic for memory and worker settings, and removed redundant failure condition in tasks." />
     <MESSAGE value="Improved PostgreSQL cluster management tasks: refined cluster existence check, enhanced debug output for better visibility, and updated conditions for safer default cluster cleanup." />
     <MESSAGE value="Enhanced PostgreSQL initialization: updated `shell` usage to handle non-critical failures gracefully, refined existence checks for initialization output, and improved task conditions." />
-    <option name="LAST_COMMIT_MESSAGE" value="Enhanced PostgreSQL initialization: updated `shell` usage to handle non-critical failures gracefully, refined existence checks for initialization output, and improved task conditions." />
+    <MESSAGE value="Enhanced PostgreSQL initialization: improved readiness checks with extended diagnostics, refined directory creation tasks, and adjusted wait conditions for robustness." />
+    <MESSAGE value="Added reinstallation and cleanup tasks across roles: implemented conditional configuration cleanup, extended data directory handling, and ensured safe reinitialization." />
+    <MESSAGE value="Enabled reinstallation and cleanup flags for infrastructure tasks in production environment." />
+    <option name="LAST_COMMIT_MESSAGE" value="Enabled reinstallation and cleanup flags for infrastructure tasks in production environment." />
   </component>
 </project>
