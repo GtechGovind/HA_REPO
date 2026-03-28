@@ -122,11 +122,11 @@
   when: postgresql_role == 'primary'
 
 - name: Initialize PostgreSQL data directory
-  command: |
+  shell: |
     pg_createcluster {{ postgresql.version }} main \
     --start-conf=auto \
     -d {{ postgresql.data_dir }} \
-    -- --waldir={{ postgresql.wal_dir }}
+    -- --waldir={{ postgresql.wal_dir }} || true
   args:
     creates: "{{ postgresql.data_dir }}/PG_VERSION"
   when: postgresql_role == 'primary'
@@ -134,6 +134,7 @@
   failed_when:
     - init_result.rc != 0
     - '"already exists" not in init_result.stderr'
+    - '"already exists" not in init_result.stdout'
 
 - name: Debug PostgreSQL data directory initialization
   debug:
