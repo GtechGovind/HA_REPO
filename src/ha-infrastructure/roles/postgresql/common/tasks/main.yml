@@ -225,13 +225,13 @@
     enabled: no
     state: started
 
-- name: Wait for PostgreSQL to be ready
-  wait_for:
-    port: "{{ postgresql.port }}"
-    host: 127.0.0.1
-    timeout: 90
-  register: wait_result
-  ignore_errors: yes
+#- name: Wait for PostgreSQL to be ready
+#  wait_for:
+#    port: "{{ postgresql.port }}"
+#    host: 127.0.0.1
+#    timeout: 90
+#  register: wait_result
+#  ignore_errors: yes
 
 - name: Diagnostic - Check PostgreSQL service status
   systemd:
