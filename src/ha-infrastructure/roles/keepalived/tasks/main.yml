@@ -44,3 +44,8 @@
     name: keepalived
     enabled: yes
     state: started
+  register: keepalived_service
+
+- name: Debug keepalived service status
+  debug:
+    msg: "Keepalived service status: {{ keepalived_service.state }}"

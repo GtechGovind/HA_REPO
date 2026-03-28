@@ -24,6 +24,14 @@
   become_user: postgres
   when: postgresql_role == 'primary'
   ignore_errors: yes
+  register: repmgr_primary_reg
+
+- name: Debug repmgr primary registration
+  debug:
+    var: repmgr_primary_reg.stdout_lines
+  when:
+    - postgresql_role == 'primary'
+    - repmgr_primary_reg is defined
 
 - name: Stop PostgreSQL on standby before cloning
   systemd:
@@ -43,10 +51,18 @@
     -U repmgr \
     -d repmgr \
     -f /etc/postgresql/{{ postgresql.version }}/main/repmgr.conf \
-    standby clone
+    standby clone --force
   become_user: postgres
   when: postgresql_role == 'standby'
+  register: clone_result
   ignore_errors: yes
+
+- name: Debug standby clone result
+  debug:
+    var: clone_result.stderr_lines
+  when:
+    - postgresql_role == 'standby'
+    - clone_result is defined
 
 - name: Start PostgreSQL on standby after cloning
   systemd:
@@ -58,6 +74,14 @@
   command: repmgr -f /etc/postgresql/{{ postgresql.version }}/main/repmgr.conf standby register
   become_user: postgres
   when: postgresql_role == 'standby'
+  register: repmgr_standby_reg
+
+- name: Debug repmgr standby registration
+  debug:
+    var: repmgr_standby_reg.stdout_lines
+  when:
+    - postgresql_role == 'standby'
+    - repmgr_standby_reg is defined
 
 - name: Verify standby health
   become_user: postgres
@@ -65,3 +89,10 @@
   register: pg_ready
   changed_when: false
   when: postgresql_role == 'standby'
+
+- name: Debug standby health check
+  debug:
+    msg: "PostgreSQL standby readiness check: {{ pg_ready.stdout }}"
+  when:
+    - postgresql_role == 'standby'
+    - pg_ready is defined

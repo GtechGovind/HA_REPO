@@ -69,3 +69,10 @@
     - prometheus
     - prometheus-alertmanager
     - grafana-server
+  register: monitoring_services
+
+- name: Debug monitoring services status
+  debug:
+    msg: "Monitoring service {{ item.item }} is {{ item.state }}"
+  loop: "{{ monitoring_services.results }}"
+  when: monitoring_services is defined

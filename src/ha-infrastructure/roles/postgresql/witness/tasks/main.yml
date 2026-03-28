@@ -23,9 +23,20 @@
   command: repmgr -f /etc/postgresql/{{ postgresql.version }}/main/repmgr.conf witness register
   become_user: postgres
   ignore_errors: yes
+  register: repmgr_witness_reg
+
+- name: Debug repmgr witness registration
+  debug:
+    var: repmgr_witness_reg.stdout_lines
+  when: repmgr_witness_reg is defined
 
 - name: Ensure PostgreSQL service is started and enabled
   systemd:
     name: postgresql
     enabled: yes
     state: started
+  register: witness_pg_service
+
+- name: Debug witness PostgreSQL status
+  debug:
+    msg: "PostgreSQL on witness is {{ witness_pg_service.state }}"

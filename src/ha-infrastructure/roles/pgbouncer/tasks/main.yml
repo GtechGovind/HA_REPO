@@ -31,3 +31,8 @@
     name: pgbouncer
     enabled: yes
     state: started
+  register: pgbouncer_service
+
+- name: Debug PgBouncer service status
+  debug:
+    msg: "PgBouncer service is {{ pgbouncer_service.state }}"

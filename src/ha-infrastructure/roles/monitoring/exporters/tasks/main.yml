@@ -42,3 +42,12 @@
     - { name: 'prometheus-postgres-exporter', when: "'db_nodes' in group_names" }
     - { name: 'prometheus-nginx-exporter', when: "'app_nodes' in group_names" }
   when: item.when
+  register: exporter_services
+
+- name: Debug exporter services status
+  debug:
+    msg: "Exporter {{ item.item.name }} is {{ item.state }}"
+  loop: "{{ exporter_services.results }}"
+  when:
+    - exporter_services is defined
+    - item.item.when

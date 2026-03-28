@@ -26,6 +26,7 @@
       - postgresql-{{ postgresql.version }}-repmgr
       - pgbackrest
       - postgresql-{{ postgresql.version }}-wal2json
+      - python3-psycopg2
     state: present
 
 - name: Create PostgreSQL basic directories
@@ -51,6 +52,13 @@
   changed_when: false
   failed_when: false
   when: postgresql_role == 'primary'
+
+- name: Debug PostgreSQL cluster check
+  debug:
+    msg: "PostgreSQL cluster check for version {{ postgresql.version }} main: {{ pg_clusters_check.rc == 0 }}"
+  when:
+    - postgresql_role == 'primary'
+    - pg_clusters_check is defined
 
 - name: Drop default PostgreSQL cluster to avoid conflicts
   command: pg_dropcluster {{ postgresql.version }} main --stop
@@ -121,6 +129,13 @@
     - '"already exists" not in init_result.stderr'
     - init_result.rc != 0
 
+- name: Debug PostgreSQL data directory initialization
+  debug:
+    var: init_result
+  when:
+    - postgresql_role == 'primary'
+    - init_result is defined
+
 - name: Configure PostgreSQL
   template:
     src: postgresql.conf.j2
@@ -139,6 +154,9 @@
     mode: '0640'
   notify: restart postgresql
 
+- name: Flush handlers to ensure configuration is applied
+  meta: flush_handlers
+
 - name: Ensure PostgreSQL service is started and enabled
   systemd:
     name: postgresql
@@ -148,9 +166,14 @@
 
 - name: Wait for PostgreSQL to be ready
   wait_for:
-    port: 5432
-    host: localhost
-    timeout: 30
+    port: "{{ postgresql.port }}"
+    host: 0.0.0.0
+    timeout: 60
+  when: postgresql_role == 'primary'
+
+- name: Debug PostgreSQL readiness
+  debug:
+    msg: "PostgreSQL is ready on localhost:5432"
   when: postgresql_role == 'primary'
 
 - name: Create replication user

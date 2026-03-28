@@ -8,8 +8,8 @@ max_connections = {{ postgresql.max_connections }}
 # Memory Settings
 shared_buffers = {{ postgresql.shared_buffers }}
 effective_cache_size = {{ postgresql.effective_cache_size }}
-work_mem = {{ (ansible_memtotal_mb * 0.05) | int }}MB
-maintenance_work_mem = {{ (ansible_memtotal_mb * 0.1) | int }}MB
+work_mem = {{ (ansible_memtotal_mb | default(512) * 0.05) | int | max(4) }}MB
+maintenance_work_mem = {{ (ansible_memtotal_mb | default(512) * 0.1) | int | max(64) }}MB
 
 # Write-Ahead Log
 wal_level = replica
@@ -60,9 +60,9 @@ autovacuum_multixact_freeze_max_age = 400000000
 # Performance
 random_page_cost = 1.1
 effective_io_concurrency = 200
-max_worker_processes = {{ ansible_processor_cores }}
-max_parallel_workers = {{ ansible_processor_cores }}
-max_parallel_workers_per_gather = {{ (ansible_processor_cores / 2) | int }}
+max_worker_processes = {{ ansible_processor_cores | default(2) }}
+max_parallel_workers = {{ ansible_processor_cores | default(2) }}
+max_parallel_workers_per_gather = {{ (ansible_processor_cores | default(2) / 2) | int | max(1) }}
 
 # Repmgr
 shared_preload_libraries = 'repmgr'

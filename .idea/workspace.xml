@@ -4,9 +4,22 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4e5b88f0-7383-45f3-a30a-4b5b1413df28" name="Changes" comment="Enhanced PostgreSQL cluster management: adjusted initialization commands, refined standby setup, and added data directory handling during standby cloning">
+    <list default="true" id="4e5b88f0-7383-45f3-a30a-4b5b1413df28" name="Changes" comment="Refactored PostgreSQL cluster management: streamlined service handling, enhanced cleanup of default cluster configurations, and ensured robust initialization and readiness checks">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/ha-infrastructure/roles/common/tasks/main.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/ha-infrastructure/roles/common/tasks/main.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ha-infrastructure/roles/keepalived/tasks/main.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/ha-infrastructure/roles/keepalived/tasks/main.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ha-infrastructure/roles/lsyncd/tasks/main.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/ha-infrastructure/roles/lsyncd/tasks/main.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ha-infrastructure/roles/monitoring/client/tasks/main.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/ha-infrastructure/roles/monitoring/client/tasks/main.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ha-infrastructure/roles/monitoring/exporters/tasks/main.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/ha-infrastructure/roles/monitoring/exporters/tasks/main.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ha-infrastructure/roles/monitoring/server/tasks/main.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/ha-infrastructure/roles/monitoring/server/tasks/main.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ha-infrastructure/roles/nginx_lb/tasks/main.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/ha-infrastructure/roles/nginx_lb/tasks/main.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ha-infrastructure/roles/pgadmin/tasks/main.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/ha-infrastructure/roles/pgadmin/tasks/main.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ha-infrastructure/roles/pgbouncer/tasks/main.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/ha-infrastructure/roles/pgbouncer/tasks/main.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/ha-infrastructure/roles/postgresql/common/tasks/main.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/ha-infrastructure/roles/postgresql/common/tasks/main.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ha-infrastructure/roles/postgresql/common/templates/postgresql.conf.j2" beforeDir="false" afterPath="$PROJECT_DIR$/src/ha-infrastructure/roles/postgresql/common/templates/postgresql.conf.j2" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ha-infrastructure/roles/postgresql/repmgr/tasks/main.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/ha-infrastructure/roles/postgresql/repmgr/tasks/main.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ha-infrastructure/roles/postgresql/standby/tasks/main.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/ha-infrastructure/roles/postgresql/standby/tasks/main.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ha-infrastructure/roles/postgresql/witness/tasks/main.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/ha-infrastructure/roles/postgresql/witness/tasks/main.yml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -178,7 +191,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1774703992131</updated>
-      <workItem from="1774703993136" duration="12434000" />
+      <workItem from="1774703993136" duration="13251000" />
     </task>
     <task id="LOCAL-00001" summary="Refactored HA infrastructure requirements and production inventory file for improved clarity, reusability, and scalability">
       <option name="closed" value="true" />
@@ -252,7 +265,39 @@
       <option name="project" value="LOCAL" />
       <updated>1774719220618</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="Refactored PostgreSQL cluster management to improve cluster checks and conflict resolution; ensured /etc/hosts entries for all hosts are present in common tasks">
+      <option name="closed" value="true" />
+      <created>1774719484784</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1774719484784</updated>
+    </task>
+    <task id="LOCAL-00011" summary="Refactored PostgreSQL cluster management: improved directory handling, enhanced default cluster cleanup, and ensured proper data directory initialization">
+      <option name="closed" value="true" />
+      <created>1774719631466</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1774719631467</updated>
+    </task>
+    <task id="LOCAL-00012" summary="Refactored PostgreSQL cluster management: improved default cluster cleanup, enhanced directory handling, and ensured proper configuration and permissions for key directories and files">
+      <option name="closed" value="true" />
+      <created>1774719755716</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1774719755716</updated>
+    </task>
+    <task id="LOCAL-00013" summary="Refactored PostgreSQL cluster management: streamlined service handling, enhanced cleanup of default cluster configurations, and ensured robust initialization and readiness checks">
+      <option name="closed" value="true" />
+      <created>1774719932777</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1774719932777</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -268,6 +313,10 @@
     <MESSAGE value="Removed unused Nginx upstream zone and health check configuration from load balancer template" />
     <MESSAGE value="Refactored PostgreSQL tasks to streamline cluster management, including initialization, service handling, and removal of default cluster configuration" />
     <MESSAGE value="Enhanced PostgreSQL cluster management: adjusted initialization commands, refined standby setup, and added data directory handling during standby cloning" />
-    <option name="LAST_COMMIT_MESSAGE" value="Enhanced PostgreSQL cluster management: adjusted initialization commands, refined standby setup, and added data directory handling during standby cloning" />
+    <MESSAGE value="Refactored PostgreSQL cluster management to improve cluster checks and conflict resolution; ensured /etc/hosts entries for all hosts are present in common tasks" />
+    <MESSAGE value="Refactored PostgreSQL cluster management: improved directory handling, enhanced default cluster cleanup, and ensured proper data directory initialization" />
+    <MESSAGE value="Refactored PostgreSQL cluster management: improved default cluster cleanup, enhanced directory handling, and ensured proper configuration and permissions for key directories and files" />
+    <MESSAGE value="Refactored PostgreSQL cluster management: streamlined service handling, enhanced cleanup of default cluster configurations, and ensured robust initialization and readiness checks" />
+    <option name="LAST_COMMIT_MESSAGE" value="Refactored PostgreSQL cluster management: streamlined service handling, enhanced cleanup of default cluster configurations, and ensured robust initialization and readiness checks" />
   </component>
 </project>

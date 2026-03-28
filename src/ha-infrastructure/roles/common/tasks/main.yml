@@ -69,6 +69,13 @@
     - { name: net.ipv4.ip_local_port_range, value: "1024 65535" }
     - { name: vm.swappiness, value: 10 }
     - { name: vm.vfs_cache_pressure, value: 50 }
+  register: sysctl_config
+
+- name: Debug kernel parameter application
+  debug:
+    msg: "Kernel parameter {{ item.item.name }} set to {{ item.item.value }}"
+  loop: "{{ sysctl_config.results }}"
+  when: item.changed
 
 - name: Configure SSH hardening
   template:
@@ -90,6 +97,11 @@
     state: enabled
     policy: deny
     direction: incoming
+  register: firewall_status
+
+- name: Debug firewall status
+  debug:
+    msg: "Firewall is enabled: {{ firewall_status.changed or firewall_status.state == 'enabled' }}"
 
 - name: Configure fail2ban
   template:

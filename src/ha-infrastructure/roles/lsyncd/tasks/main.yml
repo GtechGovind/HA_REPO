@@ -38,3 +38,8 @@
     name: lsyncd
     enabled: yes
     state: started
+  register: lsyncd_service
+
+- name: Debug lsyncd service status
+  debug:
+    msg: "Lsyncd service is {{ lsyncd_service.state }}"

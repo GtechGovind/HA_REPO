@@ -44,4 +44,12 @@
     enabled: yes
     state: started
   when: postgresql_role == 'standby'
+  register: rebuild_timer
+
+- name: Debug auto-rebuild timer status
+  debug:
+    msg: "Auto-rebuild timer is {{ rebuild_timer.state }}"
+  when:
+    - postgresql_role == 'standby'
+    - rebuild_timer is defined
 

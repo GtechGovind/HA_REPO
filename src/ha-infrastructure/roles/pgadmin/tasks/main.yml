@@ -31,6 +31,11 @@
   changed_when: "'The configuration is complete' in pgadmin_setup.stdout"
   ignore_errors: yes
 
+- name: Debug pgAdmin4 setup output
+  debug:
+    var: pgadmin_setup.stdout_lines
+  when: pgadmin_setup is defined
+
 - name: Ensure Apache is enabled and started (for pgAdmin4)
   systemd:
     name: apache2

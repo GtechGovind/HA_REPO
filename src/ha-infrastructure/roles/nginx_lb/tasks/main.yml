@@ -38,3 +38,8 @@
     name: nginx
     enabled: yes
     state: started
+  register: nginx_service
+
+- name: Debug Nginx service status
+  debug:
+    msg: "Nginx service is {{ nginx_service.state }}"
