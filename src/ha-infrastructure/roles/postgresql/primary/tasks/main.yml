@@ -7,11 +7,14 @@
 # ==============================================================================
 
 
-- name: Create replication slots (if configured)
+- name: Create replication slots for standbys
   become_user: postgres
   postgresql_slot:
-    name: "repmgr_slot_{{ item }}"
+    name: "repmgr_slot_{{ hostvars[item].postgresql_id }}"
     slot_type: physical
     state: present
-  loop: "{{ range(1, (postgresql.replication_slots | default(3)) + 1) | list }}"
-  when: postgresql_role == 'primary'
+  loop: "{{ groups['db_nodes'] }}"
+  when: 
+    - postgresql_role == 'primary'
+    - hostvars[item].postgresql_role == 'standby'
+    - hostvars[item].postgresql_id is defined

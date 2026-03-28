@@ -6,6 +6,9 @@ node_name='{{ inventory_hostname }}'
 conninfo='host={{ ansible_host }} user=repmgr dbname=repmgr connect_timeout=2 password={{ vault_repmgr_password }}'
 data_directory='{{ postgresql.data_dir }}'
 
+# Use replication slots
+use_replication_slots=yes
+
 # Failover settings
 failover=automatic
 promote_command='repmgr standby promote -f /etc/postgresql/{{ postgresql.version }}/main/repmgr.conf --log-to-file'

@@ -54,7 +54,7 @@
     -U repmgr \
     -d repmgr \
     -f /etc/postgresql/{{ postgresql.version }}/main/repmgr.conf \
-    standby clone --force
+    standby clone --force --fast-checkpoint
   environment:
     PGPASSWORD: "{{ vault_repmgr_password }}"
   become_user: postgres

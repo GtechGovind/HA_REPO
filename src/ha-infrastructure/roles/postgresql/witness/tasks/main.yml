@@ -22,11 +22,33 @@
     - "/var/lib/postgresql/{{ postgresql.version }}/main"
   when: infra_reinstall or infra_cleanup_data
 
+- name: Create repmgr user and database on witness
+  become_user: postgres
+  postgresql_user:
+    name: repmgr
+    password: "{{ vault_repmgr_password }}"
+    role_attr_flags: SUPERUSER,LOGIN
+  when: witness_for_postgresql | default(false)
+
+- name: Create repmgr database on witness
+  become_user: postgres
+  postgresql_db:
+    name: repmgr
+    owner: repmgr
+  when: witness_for_postgresql | default(false)
+
 - name: Create repmgr configuration for witness
   template:
     src: ../../repmgr/templates/repmgr.conf.j2
     dest: /etc/postgresql/{{ postgresql.version }}/main/repmgr.conf
   notify: restart postgresql
+
+- name: Ensure PostgreSQL service is started and enabled
+  systemd:
+    name: "postgresql@{{ postgresql.version }}-main"
+    enabled: yes
+    state: started
+  register: witness_pg_service
 
 - name: Register witness node
   command: repmgr -f /etc/postgresql/{{ postgresql.version }}/main/repmgr.conf witness register
@@ -38,13 +60,6 @@
   debug:
     var: repmgr_witness_reg.stdout_lines
   when: repmgr_witness_reg is defined
-
-- name: Ensure PostgreSQL service is started and enabled
-  systemd:
-    name: "postgresql@{{ postgresql.version }}-main"
-    enabled: yes
-    state: started
-  register: witness_pg_service
 
 - name: Debug witness PostgreSQL status
   debug:

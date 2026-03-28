@@ -26,8 +26,8 @@ wal_sync_method = fdatasync
 full_page_writes = on
 wal_compression = on
 wal_keep_size = {{ postgresql.wal_keep_size }}
-max_wal_senders = {{ postgresql.replication_slots * 2 }}
-max_replication_slots = {{ postgresql.replication_slots }}
+max_wal_senders = {{ postgresql.replication_slots * 2 + 5 }}
+max_replication_slots = {{ postgresql.replication_slots + 5 }}
 hot_standby = on
 
 # Archiving
