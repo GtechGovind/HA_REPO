@@ -31,12 +31,33 @@
   notify: restart postgres-exporter
   when: inventory_hostname in groups.get('db_nodes', [])
 
+- name: Configure postgres-exporter queries
+  copy:
+    content: |
+      pg_is_primary:
+        query: "SELECT CASE WHEN pg_is_in_recovery() THEN 0 ELSE 1 END as is_primary"
+        metrics:
+          - is_primary:
+              usage: "GAUGE"
+              description: "1 if node is primary, 0 if standby"
+    dest: /etc/prometheus/postgres_exporter_queries.yml
+  notify: restart postgres-exporter
+  when: inventory_hostname in groups.get('db_nodes', [])
+
 - name: Install nginx-exporter
   apt:
     name: prometheus-nginx-exporter
     state: present
   when: inventory_hostname in groups.get('app_nodes', [])
   notify: restart nginx-exporter
+
+- name: Configure nginx-exporter
+  copy:
+    content: |
+      ARGS="-nginx.scrape-uri http://localhost:8080/status/format/json"
+    dest: /etc/default/prometheus-nginx-exporter
+  notify: restart nginx-exporter
+  when: inventory_hostname in groups.get('app_nodes', [])
 
 - name: Ensure exporters are started and enabled
   systemd:

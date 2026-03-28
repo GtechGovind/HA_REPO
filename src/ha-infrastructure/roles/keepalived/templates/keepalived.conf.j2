@@ -1,0 +1,85 @@
+global_defs {
+    enable_script_security
+    script_user keepalived_script
+    router_id LVS_{{ inventory_hostname }}
+}
+
+{% if inventory_hostname in groups.get('app_nodes', []) %}
+vrrp_script chk_nginx {
+    script "/etc/keepalived/health-check.sh nginx"
+    interval 2
+    weight -20
+    fall 2
+    rise 1
+}
+
+vrrp_script chk_app_health {
+    script "/etc/keepalived/health-check.sh app"
+    interval 5
+    weight -10
+    fall 3
+    rise 2
+}
+
+vrrp_instance VI_APP {
+    interface {{ ansible_default_ipv4.interface | default('eth0') }}
+    state {{ 'MASTER' if inventory_hostname == groups['app_nodes'][0] else 'BACKUP' }}
+    virtual_router_id {{ network.vrrp_vid }}
+    priority {{ network.vrrp_priority_primary if inventory_hostname == groups['app_nodes'][0] else network.vrrp_priority_standby }}
+    advert_int 1
+
+    authentication {
+        auth_type PASS
+        auth_pass {{ vault_keepalived_password }}
+    }
+
+    virtual_ipaddress {
+        {{ network.app_vip }}/24 dev {{ ansible_default_ipv4.interface | default('eth0') }} label {{ ansible_default_ipv4.interface | default('eth0') }}:vip
+    }
+
+    track_script {
+        chk_nginx
+        chk_app_health
+    }
+
+    notify_master "/etc/keepalived/notify.sh master"
+    notify_backup "/etc/keepalived/notify.sh backup"
+    notify_fault "/etc/keepalived/notify.sh fault"
+}
+{% endif %}
+
+{% if inventory_hostname in groups.get('db_nodes', []) %}
+vrrp_script chk_postgres {
+    script "/etc/keepalived/health-check.sh postgres"
+    interval 2
+    weight -20
+    fall 2
+    rise 1
+}
+
+vrrp_instance VI_DB {
+    interface {{ ansible_default_ipv4.interface | default('eth0') }}
+    state BACKUP
+    virtual_router_id {{ network.vrrp_vid + 1 }}
+    priority {{ network.vrrp_priority_primary if postgresql_role == 'primary' else network.vrrp_priority_standby }}
+    advert_int 1
+    nopreempt
+
+    authentication {
+        auth_type PASS
+        auth_pass {{ vault_keepalived_password }}
+    }
+
+    virtual_ipaddress {
+        {{ network.db_vip }}/24 dev {{ ansible_default_ipv4.interface | default('eth0') }} label {{ ansible_default_ipv4.interface | default('eth0') }}:db_vip
+    }
+
+    track_script {
+        chk_postgres
+    }
+
+    notify_master "/etc/keepalived/notify.sh master"
+    notify_backup "/etc/keepalived/notify.sh backup"
+    notify_fault "/etc/keepalived/notify.sh fault"
+}
+{% endif %}

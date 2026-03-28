@@ -23,7 +23,104 @@
       - prometheus
       - prometheus-alertmanager
       - grafana
+      - unzip
     state: present
+
+- name: Check if Loki is installed
+  stat:
+    path: /usr/local/bin/loki
+  register: loki_bin
+
+- name: Install Loki
+  block:
+    - name: Download Loki binary
+      get_url:
+        url: "https://github.com/grafana/loki/releases/download/v2.9.4/loki-linux-amd64.zip"
+        dest: /tmp/loki.zip
+        mode: '0644'
+
+    - name: Unarchive Loki binary
+      unarchive:
+        src: /tmp/loki.zip
+        dest: /usr/local/bin/
+        remote_src: yes
+        mode: '0755'
+
+    - name: Rename Loki binary
+      command: mv /usr/local/bin/loki-linux-amd64 /usr/local/bin/loki
+      args:
+        removes: /usr/local/bin/loki-linux-amd64
+  when: not loki_bin.stat.exists
+
+- name: Create Loki user
+  user:
+    name: loki
+    system: yes
+    shell: /bin/false
+
+- name: Create Loki directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: loki
+    group: loki
+    mode: '0755'
+  loop:
+    - /etc/loki
+    - /var/lib/loki
+
+- name: Configure Loki
+  copy:
+    content: |
+      auth_enabled: false
+      server:
+        http_listen_port: {{ monitoring.loki_port }}
+      common:
+        path_prefix: /var/lib/loki
+        storage:
+          filesystem:
+            chunks_directory: /var/lib/loki/chunks
+            rules_directory: /var/lib/loki/rules
+        replication_factor: 1
+        ring:
+          instance_addr: 127.0.0.1
+          kvstore:
+            store: inmemory
+      schema_config:
+        configs:
+          - from: 2020-10-24
+            store: boltdb-shipper
+            object_store: filesystem
+            schema: v11
+            index:
+              prefix: index_
+              period: 24h
+      ruler:
+        alertmanager_url: http://localhost:9093
+    dest: /etc/loki/loki.yml
+    owner: loki
+    group: loki
+    mode: '0644'
+  notify: restart loki
+
+- name: Create Loki systemd service
+  copy:
+    content: |
+      [Unit]
+      Description=Loki logging service
+      After=network.target
+
+      [Service]
+      Type=simple
+      User=loki
+      Group=loki
+      ExecStart=/usr/local/bin/loki -config.file=/etc/loki/loki.yml
+      Restart=on-failure
+
+      [Install]
+      WantedBy=multi-user.target
+    dest: /etc/systemd/system/loki.service
+  notify: restart loki
 
 - name: Force cleanup monitoring configuration for reinstallation
   file:
@@ -117,6 +214,7 @@
     - prometheus
     - prometheus-alertmanager
     - grafana-server
+    - loki
   register: monitoring_services
 
 - name: Debug monitoring services status

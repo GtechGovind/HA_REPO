@@ -17,24 +17,16 @@
     path: "{{ item }}"
     state: absent
   loop:
-    - /etc/keepalived/keepalived-app.conf
-    - /etc/keepalived/keepalived-db.conf
+    - /etc/keepalived/keepalived.conf
     - /etc/keepalived/health-check.sh
     - /etc/keepalived/notify.sh
   when: infra_reinstall
 
-- name: Configure keepalived for application VIP
+- name: Configure keepalived configuration
   template:
-    src: keepalived-app.conf.j2
-    dest: /etc/keepalived/keepalived-app.conf
+    src: keepalived.conf.j2
+    dest: /etc/keepalived/keepalived.conf
   notify: restart keepalived
-
-- name: Configure keepalived for database VIP
-  template:
-    src: keepalived-db.conf.j2
-    dest: /etc/keepalived/keepalived-db.conf
-  notify: restart keepalived
-  when: inventory_hostname in groups.get('db_nodes', [])
 
 - name: Create health check script
   template:
@@ -43,12 +35,26 @@
     mode: '0755'
   notify: restart keepalived
 
+- name: Ensure sudoers configuration for postgres health check
+  copy:
+    dest: /etc/sudoers.d/keepalived_postgres
+    content: "keepalived_script ALL=(postgres) NOPASSWD: /usr/bin/psql\n"
+    mode: '0440'
+    validate: /usr/sbin/visudo -cf %s
+  when: inventory_hostname in groups.get('db_nodes', [])
+
 - name: Create notify script
   copy:
     src: ../../../scripts/failover-notify.sh
     dest: /etc/keepalived/notify.sh
     mode: '0755'
   notify: restart keepalived
+
+- name: Create keepalived script user
+  user:
+    name: keepalived_script
+    system: yes
+    shell: /sbin/nologin
 
 - name: Enable and start keepalived
   systemd:

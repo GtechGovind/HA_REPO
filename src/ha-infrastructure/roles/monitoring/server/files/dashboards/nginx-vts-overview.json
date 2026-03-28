@@ -22,69 +22,86 @@
       "datasource": "Prometheus",
       "fieldConfig": {
         "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisLabel": "Requests/sec",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
+          "color": { "mode": "palette-classic" },
+          "unit": "reqps"
+        }
+      },
+      "gridPos": { "h": 4, "w": 8, "x": 0, "y": 0 },
+      "id": 10,
+      "options": {
+        "reduceOptions": { "calcs": ["mean"] }
+      },
+      "targets": [
+        {
+          "expr": "sum(rate(nginx_vts_server_requests_total[5m]))",
+          "refId": "A"
+        }
+      ],
+      "title": "Total Request Rate",
+      "type": "stat"
+    },
+    {
+      "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
           "thresholds": {
-            "mode": "absolute",
+            "mode": "percentage",
             "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
+              { "color": "green", "value": null },
+              { "color": "red", "value": 1 }
             ]
-          }
-        },
-        "overrides": []
+          },
+          "unit": "percent"
+        }
       },
-      "gridPos": {
-        "h": 8,
-        "w": 24,
-        "x": 0,
-        "y": 0
+      "gridPos": { "h": 4, "w": 8, "x": 8, "y": 0 },
+      "id": 11,
+      "options": {
+        "reduceOptions": { "calcs": ["mean"] }
       },
+      "targets": [
+        {
+          "expr": "sum(rate(nginx_vts_server_requests_total{code=\"5xx\"}[5m])) / sum(rate(nginx_vts_server_requests_total[5m])) * 100",
+          "refId": "A"
+        }
+      ],
+      "title": "Error Rate (5xx)",
+      "type": "stat"
+    },
+    {
+      "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s"
+        }
+      },
+      "gridPos": { "h": 4, "w": 8, "x": 16, "y": 0 },
+      "id": 12,
+      "options": {
+        "reduceOptions": { "calcs": ["mean"] }
+      },
+      "targets": [
+        {
+          "expr": "avg(nginx_vts_upstream_response_time_seconds)",
+          "refId": "A"
+        }
+      ],
+      "title": "Avg Response Time",
+      "type": "stat"
+    },
+    {
+      "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "custom": { "drawStyle": "line", "fillOpacity": 10, "lineWidth": 2 },
+          "unit": "reqps"
+        }
+      },
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 4 },
       "id": 1,
       "options": {
-        "legend": {
-          "calcs": [
-            "mean",
-            "max"
-          ],
-          "displayMode": "table",
-          "placement": "bottom"
-        },
-        "tooltip": {
-          "mode": "multi"
-        }
+        "legend": { "displayMode": "table", "placement": "bottom" }
       },
       "targets": [
         {
@@ -93,79 +110,56 @@
           "refId": "A"
         }
       ],
-      "title": "Nginx Request Rate",
+      "title": "Request Rate by Instance",
       "type": "timeseries"
     },
     {
       "datasource": "Prometheus",
       "fieldConfig": {
         "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "yellow",
-                "value": 100
-              },
-              {
-                "color": "red",
-                "value": 500
-              }
-            ]
-          }
-        },
-        "overrides": []
+          "unit": "reqps"
+        }
       },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 8
-      },
-      "id": 2,
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 12 },
+      "id": 13,
       "options": {
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showThresholdLabels": false,
-        "showThresholdMarkers": true
+        "legend": { "displayMode": "table", "placement": "bottom" }
       },
       "targets": [
         {
-          "expr": "sum(nginx_vts_server_connections{status=\"active\"})",
+          "expr": "sum(rate(nginx_vts_upstream_requests_total[5m])) by (upstream)",
+          "legendFormat": "{{ upstream }}",
           "refId": "A"
         }
       ],
-      "title": "Active Connections",
-      "type": "gauge"
+      "title": "Upstream Traffic Distribution",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "Loki",
+      "gridPos": { "h": 10, "w": 24, "x": 0, "y": 20 },
+      "id": 100,
+      "targets": [
+        {
+          "expr": "{job=\"varlogs\", host=~\"app.*\"} | json | line_format \"{{.remote_addr}} - {{.request}} {{.status}} {{.body_bytes_sent}}\"",
+          "refId": "A"
+        }
+      ],
+      "title": "Application Access Logs",
+      "type": "logs"
     }
   ],
   "schemaVersion": 30,
   "style": "dark",
-  "tags": ["nginx", "ha"],
+  "tags": ["nginx", "ha", "vts"],
   "templating": {
     "list": []
   },
   "time": {
-    "from": "now-6h",
+    "from": "now-1h",
     "to": "now"
   },
-  "timepicker": {},
-  "timezone": "",
-  "title": "Nginx VTS Overview",
-  "uid": "nginx-vts-overview",
+  "title": "Nginx Global Traffic Control",
+  "uid": "nginx-traffic-control",
   "version": 1
 }
