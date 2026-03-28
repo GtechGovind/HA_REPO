@@ -18,6 +18,12 @@
     repo: "deb [signed-by=/usr/share/keyrings/postgresql.gpg] http://apt.postgresql.org/pub/repos/apt {{ ansible_distribution_release }}-pgdg main"
     state: present
 
+- name: Reinstall postgresql-common to ensure correct service files
+  apt:
+    name: postgresql-common
+    state: latest
+    install_recommends: yes
+
 - name: Install PostgreSQL packages
   apt:
     name:
@@ -28,6 +34,29 @@
       - postgresql-{{ postgresql.version }}-wal2json
       - python3-psycopg2
     state: present
+
+- name: Fix PostgreSQL service file
+  copy:
+    dest: /usr/lib/systemd/system/postgresql.service
+    content: |
+      [Unit]
+      Description=PostgreSQL RDBMS
+      After=network-online.target
+      Wants=network-online.target
+
+      [Service]
+      Type=oneshot
+      ExecStart=/usr/bin/pg_ctlcluster --skip-systemctl-redirect --force {{ postgresql.version }} main start
+      ExecStop=/usr/bin/pg_ctlcluster --skip-systemctl-redirect --force {{ postgresql.version }} main stop
+      ExecReload=/usr/bin/pg_ctlcluster --skip-systemctl-redirect --force {{ postgresql.version }} main reload
+      RemainAfterExit=yes
+
+      [Install]
+      WantedBy=multi-user.target
+    owner: root
+    group: root
+    mode: '0644'
+  notify: reload systemd
 
 - name: Create PostgreSQL basic directories
   file:
@@ -41,8 +70,11 @@
 
 - name: Stop PostgreSQL service completely
   systemd:
-    name: postgresql
+    name: "{{ item }}"
     state: stopped
+  loop:
+    - postgresql
+    - "postgresql@{{ postgresql.version }}-main"
   ignore_errors: yes
   when: postgresql_role == 'primary'
 
@@ -55,8 +87,11 @@
 
 - name: Force stop PostgreSQL for reinstallation
   systemd:
-    name: postgresql
+    name: "{{ item }}"
     state: stopped
+  loop:
+    - postgresql
+    - "postgresql@{{ postgresql.version }}-main"
   when: infra_reinstall
   ignore_errors: yes
 
@@ -141,6 +176,14 @@
     - "/etc/postgresql/{{ postgresql.version }}/main"
     - "/etc/postgresql/{{ postgresql.version }}/main/conf.d"
 
+- name: Ensure start.conf is set to auto
+  copy:
+    dest: "/etc/postgresql/{{ postgresql.version }}/main/start.conf"
+    content: "auto\n"
+    owner: postgres
+    group: postgres
+    mode: '0644'
+
 - name: Debug PostgreSQL data directory initialization
   debug:
     var: init_result
@@ -169,10 +212,17 @@
 - name: Flush handlers to ensure configuration is applied
   meta: flush_handlers
 
-- name: Ensure PostgreSQL service is started and enabled
+- name: Ensure PostgreSQL cluster-specific service is enabled and started
+  systemd:
+    name: "postgresql@{{ postgresql.version }}-main"
+    enabled: yes
+    state: started
+    daemon_reload: yes
+
+- name: Ensure main PostgreSQL service is disabled to avoid conflicts
   systemd:
     name: postgresql
-    enabled: yes
+    enabled: no
     state: started
 
 - name: Wait for PostgreSQL to be ready
@@ -185,7 +235,7 @@
 
 - name: Diagnostic - Check PostgreSQL service status
   systemd:
-    name: postgresql
+    name: "postgresql@{{ postgresql.version }}-main"
   register: pg_service_status
   when: 
     - wait_result is failed
@@ -199,7 +249,7 @@
 - name: Diagnostic - Check PostgreSQL logs
   shell: |
     tail -n 50 /var/log/postgresql/postgresql-{{ postgresql.version }}-main.log || \
-    journalctl -u postgresql --no-pager -n 50
+    journalctl -u postgresql@{{ postgresql.version }}-main --no-pager -n 50
   register: pg_logs_diag
   when: 
     - wait_result is failed

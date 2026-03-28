@@ -41,7 +41,7 @@
 
 - name: Ensure PostgreSQL service is started and enabled
   systemd:
-    name: postgresql
+    name: "postgresql@{{ postgresql.version }}-main"
     enabled: yes
     state: started
   register: witness_pg_service

@@ -35,8 +35,11 @@
 
 - name: Stop PostgreSQL on standby before cloning
   systemd:
-    name: postgresql
+    name: "{{ item }}"
     state: stopped
+  loop:
+    - postgresql
+    - "postgresql@{{ postgresql.version }}-main"
   when: postgresql_role == 'standby'
 
 - name: Clear data directory on standby before cloning
@@ -66,7 +69,7 @@
 
 - name: Start PostgreSQL on standby after cloning
   systemd:
-    name: postgresql
+    name: "postgresql@{{ postgresql.version }}-main"
     state: started
   when: postgresql_role == 'standby'
 
