@@ -47,15 +47,19 @@
   when: postgresql_role == 'primary'
 
 - name: Check if default PostgreSQL cluster exists
-  shell: pg_lsclusters --no-header | grep -q "{{ postgresql.version }} .*main"
+  shell: |
+    pg_lsclusters --no-header | grep "{{ postgresql.version }} .*main" || true
   register: pg_clusters_check
   changed_when: false
-  failed_when: false
   when: postgresql_role == 'primary'
 
 - name: Debug PostgreSQL cluster check
   debug:
-    msg: "PostgreSQL cluster check for version {{ postgresql.version }} main: {{ pg_clusters_check.rc == 0 }}"
+    msg: 
+      - "PostgreSQL cluster check for version {{ postgresql.version }} main"
+      - "Return code: {{ pg_clusters_check.rc | default('N/A') }}"
+      - "Stdout: {{ pg_clusters_check.stdout | default('N/A') }}"
+      - "Stderr: {{ pg_clusters_check.stderr | default('N/A') }}"
   when:
     - postgresql_role == 'primary'
     - pg_clusters_check is defined
@@ -64,7 +68,8 @@
   command: pg_dropcluster {{ postgresql.version }} main --stop
   when:
     - postgresql_role == 'primary'
-    - pg_clusters_check.rc == 0
+    - pg_clusters_check is defined
+    - '"main" in pg_clusters_check.stdout'
   ignore_errors: yes
 
 - name: Remove PostgreSQL cluster configuration files
@@ -77,7 +82,8 @@
     - "/var/log/postgresql/postgresql-{{ postgresql.version }}-main.log"
   when:
     - postgresql_role == 'primary'
-    - pg_clusters_check.rc == 0
+    - pg_clusters_check is defined
+    - '"main" in pg_clusters_check.stdout'
 
 - name: Remove stale PostgreSQL data directory if it exists
   file:
@@ -88,7 +94,8 @@
     - "{{ postgresql.wal_dir }}"
   when:
     - postgresql_role == 'primary'
-    - pg_clusters_check.rc == 0
+    - pg_clusters_check is defined
+    - '"main" in pg_clusters_check.stdout'
 
 - name: Create PostgreSQL configuration directory
   file:
