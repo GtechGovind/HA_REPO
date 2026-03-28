@@ -9,8 +9,16 @@ case $SERVICE in
         exit $?
         ;;
     postgres)
-        pg_isready -h localhost -p {{ postgresql.port }} -U postgres
-        exit $?
+        # Check if PostgreSQL is ready and if it is the primary (not in recovery)
+        pg_isready -h localhost -p {{ postgresql.port }} -U postgres > /dev/null 2>&1 || exit 1
+        is_recovery=$(sudo -u postgres psql -t -A -c "SELECT pg_is_in_recovery()" -h localhost -p {{ postgresql.port }} 2>/dev/null)
+        if [[ "$is_recovery" == "f" ]]; then
+            exit 0
+        else
+            # Standby node is healthy but not the primary
+            # We exit with 1 to reduce Keepalived priority, but not 2 to indicate "FAULT"
+            exit 1
+        fi
         ;;
     app)
         # Check local application health

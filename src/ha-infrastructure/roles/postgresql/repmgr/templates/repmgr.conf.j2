@@ -17,3 +17,8 @@ follow_command='repmgr standby follow -f /etc/postgresql/{{ postgresql.version }
 # Monitoring
 monitoring_history=yes
 monitor_interval_secs=2
+
+# Failover settings (Faster for industry-standard)
+reconnect_attempts=3
+reconnect_interval=5
+primary_visibility_timeout=10

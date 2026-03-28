@@ -14,10 +14,11 @@ vrrp_script chk_postgres {
 
 vrrp_instance VI_DB {
     interface eth0
-    state {{ 'MASTER' if postgresql_role == 'primary' else 'BACKUP' }}
+    state BACKUP
     virtual_router_id {{ network.vrrp_vid + 1 }}
     priority {{ network.vrrp_priority_primary if postgresql_role == 'primary' else network.vrrp_priority_standby }}
     advert_int 1
+    nopreempt
 
     authentication {
         auth_type PASS
