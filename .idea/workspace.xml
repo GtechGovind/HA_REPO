@@ -4,11 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4e5b88f0-7383-45f3-a30a-4b5b1413df28" name="Changes" comment="Removed unused Nginx upstream zone and health check configuration from load balancer template">
+    <list default="true" id="4e5b88f0-7383-45f3-a30a-4b5b1413df28" name="Changes" comment="Enhanced PostgreSQL cluster management: adjusted initialization commands, refined standby setup, and added data directory handling during standby cloning">
+      <change beforePath="$PROJECT_DIR$/src/ha-infrastructure/roles/common/tasks/main.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/ha-infrastructure/roles/common/tasks/main.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/ha-infrastructure/roles/postgresql/common/tasks/main.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/ha-infrastructure/roles/postgresql/common/tasks/main.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ha-infrastructure/roles/postgresql/primary/tasks/main.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/ha-infrastructure/roles/postgresql/primary/tasks/main.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ha-infrastructure/roles/postgresql/repmgr/tasks/main.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/ha-infrastructure/roles/postgresql/repmgr/tasks/main.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ha-infrastructure/roles/postgresql/standby/tasks/main.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/ha-infrastructure/roles/postgresql/standby/tasks/main.yml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -180,7 +178,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1774703992131</updated>
-      <workItem from="1774703993136" duration="12058000" />
+      <workItem from="1774703993136" duration="12434000" />
     </task>
     <task id="LOCAL-00001" summary="Refactored HA infrastructure requirements and production inventory file for improved clarity, reusability, and scalability">
       <option name="closed" value="true" />
@@ -238,7 +236,23 @@
       <option name="project" value="LOCAL" />
       <updated>1774718917764</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="Refactored PostgreSQL tasks to streamline cluster management, including initialization, service handling, and removal of default cluster configuration">
+      <option name="closed" value="true" />
+      <created>1774719098912</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1774719098912</updated>
+    </task>
+    <task id="LOCAL-00009" summary="Enhanced PostgreSQL cluster management: adjusted initialization commands, refined standby setup, and added data directory handling during standby cloning">
+      <option name="closed" value="true" />
+      <created>1774719220618</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1774719220618</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -252,6 +266,8 @@
     <MESSAGE value="Added Nginx and VTS Exporter PPAs to HA infrastructure roles" />
     <MESSAGE value="Replaced Nginx VTS exporter with Prometheus Nginx exporter across roles, updated inventory variables, and added service handlers" />
     <MESSAGE value="Removed unused Nginx upstream zone and health check configuration from load balancer template" />
-    <option name="LAST_COMMIT_MESSAGE" value="Removed unused Nginx upstream zone and health check configuration from load balancer template" />
+    <MESSAGE value="Refactored PostgreSQL tasks to streamline cluster management, including initialization, service handling, and removal of default cluster configuration" />
+    <MESSAGE value="Enhanced PostgreSQL cluster management: adjusted initialization commands, refined standby setup, and added data directory handling during standby cloning" />
+    <option name="LAST_COMMIT_MESSAGE" value="Enhanced PostgreSQL cluster management: adjusted initialization commands, refined standby setup, and added data directory handling during standby cloning" />
   </component>
 </project>
