@@ -18,7 +18,22 @@ follow_command='repmgr standby follow -f /etc/postgresql/{{ postgresql.version }
 monitoring_history=yes
 monitor_interval_secs=2
 
+# Logging
+log_file='/var/log/postgresql/repmgr.log'
+log_level=INFO
+
 # Failover settings (Faster for industry-standard)
 reconnect_attempts=3
 reconnect_interval=5
 primary_visibility_timeout=10
+standby_disconnect_on_failover=yes
+
+# Command and script settings
+pg_bindir='/usr/lib/postgresql/{{ postgresql.version }}/bin'
+event_notification_command='/bin/bash /opt/ha-infrastructure/scripts/failover-notify.sh %e'
+
+# Service management commands (PostgreSQL cluster-specific)
+service_start_command='/usr/bin/pg_ctlcluster {{ postgresql.version }} main start'
+service_stop_command='/usr/bin/pg_ctlcluster {{ postgresql.version }} main stop'
+service_restart_command='/usr/bin/pg_ctlcluster {{ postgresql.version }} main restart'
+service_reload_command='/usr/bin/pg_ctlcluster {{ postgresql.version }} main reload'

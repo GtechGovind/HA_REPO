@@ -41,7 +41,9 @@
   template:
     src: ../../repmgr/templates/repmgr.conf.j2
     dest: /etc/postgresql/{{ postgresql.version }}/main/repmgr.conf
-  notify: restart postgresql
+  notify:
+    - restart postgresql
+    - restart repmgrd
 
 - name: Ensure PostgreSQL service is started and enabled
   systemd:
@@ -51,7 +53,7 @@
   register: witness_pg_service
 
 - name: Register witness node
-  command: repmgr -f /etc/postgresql/{{ postgresql.version }}/main/repmgr.conf witness register
+  command: repmgr -f /etc/postgresql/{{ postgresql.version }}/main/repmgr.conf witness register --force
   become_user: postgres
   ignore_errors: yes
   register: repmgr_witness_reg
@@ -60,6 +62,21 @@
   debug:
     var: repmgr_witness_reg.stdout_lines
   when: repmgr_witness_reg is defined
+
+- name: Enable repmgrd in default configuration for witness
+  lineinfile:
+    path: /etc/default/repmgrd
+    regexp: '^REPMGRD_ENABLED='
+    line: 'REPMGRD_ENABLED=yes'
+  when: witness_for_postgresql | default(false)
+
+- name: Ensure repmgrd service is started and enabled on witness
+  systemd:
+    name: repmgrd
+    state: started
+    enabled: yes
+    daemon_reload: yes
+  when: witness_for_postgresql | default(false)
 
 - name: Debug witness PostgreSQL status
   debug:

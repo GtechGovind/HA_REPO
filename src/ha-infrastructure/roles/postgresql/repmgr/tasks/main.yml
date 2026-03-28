@@ -2,7 +2,9 @@
   template:
     src: repmgr.conf.j2
     dest: /etc/postgresql/{{ postgresql.version }}/main/repmgr.conf
-  notify: restart postgresql
+  notify:
+    - restart postgresql
+    - restart repmgrd
 
 - name: Create repmgr user and database
   become_user: postgres
@@ -20,7 +22,7 @@
   when: postgresql_role == 'primary'
 
 - name: Register primary node
-  command: repmgr -f /etc/postgresql/{{ postgresql.version }}/main/repmgr.conf primary register
+  command: repmgr -f /etc/postgresql/{{ postgresql.version }}/main/repmgr.conf primary register --force
   become_user: postgres
   when: postgresql_role == 'primary'
   ignore_errors: yes
@@ -77,7 +79,7 @@
   when: postgresql_role == 'standby'
 
 - name: Register standby node
-  command: repmgr -f /etc/postgresql/{{ postgresql.version }}/main/repmgr.conf standby register
+  command: repmgr -f /etc/postgresql/{{ postgresql.version }}/main/repmgr.conf standby register --force
   become_user: postgres
   when: postgresql_role == 'standby'
   register: repmgr_standby_reg
@@ -88,6 +90,21 @@
   when:
     - postgresql_role == 'standby'
     - repmgr_standby_reg is defined
+
+- name: Enable repmgrd in default configuration
+  lineinfile:
+    path: /etc/default/repmgrd
+    regexp: '^REPMGRD_ENABLED='
+    line: 'REPMGRD_ENABLED=yes'
+  when: postgresql_role == 'primary' or postgresql_role == 'standby'
+
+- name: Ensure repmgrd service is started and enabled
+  systemd:
+    name: repmgrd
+    state: started
+    enabled: yes
+    daemon_reload: yes
+  when: postgresql_role == 'primary' or postgresql_role == 'standby'
 
 - name: Verify standby health
   become_user: postgres

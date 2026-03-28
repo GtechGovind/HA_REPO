@@ -4,10 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4e5b88f0-7383-45f3-a30a-4b5b1413df28" name="Changes" comment="Improved directory management and ownership for Prometheus and Grafana, refined exporter task conditions, and ensured proper dashboard directory setup.">
+    <list default="true" id="4e5b88f0-7383-45f3-a30a-4b5b1413df28" name="Changes" comment="Enhanced failover and monitoring settings: adjusted `repmgr.conf` for faster failover, updated Keepalived configuration to prevent preemption, and improved PostgreSQL health checks for role-specific validation.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ha-infrastructure/roles/keepalived/tasks/main.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/ha-infrastructure/roles/keepalived/tasks/main.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ha-infrastructure/roles/monitoring/exporters/tasks/main.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/ha-infrastructure/roles/monitoring/exporters/tasks/main.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ha-infrastructure/roles/postgresql/repmgr/tasks/main.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/ha-infrastructure/roles/postgresql/repmgr/tasks/main.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ha-infrastructure/roles/postgresql/repmgr/templates/repmgr.conf.j2" beforeDir="false" afterPath="$PROJECT_DIR$/src/ha-infrastructure/roles/postgresql/repmgr/templates/repmgr.conf.j2" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ha-infrastructure/roles/postgresql/witness/tasks/main.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/ha-infrastructure/roles/postgresql/witness/tasks/main.yml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -179,7 +180,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1774703992131</updated>
-      <workItem from="1774703993136" duration="19084000" />
+      <workItem from="1774703993136" duration="21139000" />
     </task>
     <task id="LOCAL-00001" summary="Refactored HA infrastructure requirements and production inventory file for improved clarity, reusability, and scalability">
       <option name="closed" value="true" />
@@ -485,15 +486,29 @@
       <option name="project" value="LOCAL" />
       <updated>1774725880564</updated>
     </task>
-    <option name="localTasksCounter" value="39" />
+    <task id="LOCAL-00039" summary="Updated `when` clause usage across exporter and keepalived tasks to ensure consistent group handling and improve syntax clarity.">
+      <option name="closed" value="true" />
+      <created>1774726176672</created>
+      <option name="number" value="00039" />
+      <option name="presentableId" value="LOCAL-00039" />
+      <option name="project" value="LOCAL" />
+      <updated>1774726176672</updated>
+    </task>
+    <task id="LOCAL-00040" summary="Enhanced failover and monitoring settings: adjusted `repmgr.conf` for faster failover, updated Keepalived configuration to prevent preemption, and improved PostgreSQL health checks for role-specific validation.">
+      <option name="closed" value="true" />
+      <created>1774727644570</created>
+      <option name="number" value="00040" />
+      <option name="presentableId" value="LOCAL-00040" />
+      <option name="project" value="LOCAL" />
+      <updated>1774727644570</updated>
+    </task>
+    <option name="localTasksCounter" value="41" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Added debug tasks across HA roles to improve visibility into service status, cluster readiness, and configuration outputs. Enhanced safety with default values for PostgreSQL configuration settings." />
-    <MESSAGE value="Standardized service status debug tasks across HA roles, added conditional checks for defined statuses, and improved safety with default value handling." />
     <MESSAGE value="Refined PostgreSQL configuration template: standardized `max` logic for memory and worker settings, and removed redundant failure condition in tasks." />
     <MESSAGE value="Improved PostgreSQL cluster management tasks: refined cluster existence check, enhanced debug output for better visibility, and updated conditions for safer default cluster cleanup." />
     <MESSAGE value="Enhanced PostgreSQL initialization: updated `shell` usage to handle non-critical failures gracefully, refined existence checks for initialization output, and improved task conditions." />
@@ -517,6 +532,8 @@
     <MESSAGE value="Refined task conditions for exporter roles: replaced group-based checks with `inventory_hostname` for more accurate host targeting." />
     <MESSAGE value="Refined task conditions for exporters: updated `when` clause syntax for improved readability and consistency." />
     <MESSAGE value="Improved directory management and ownership for Prometheus and Grafana, refined exporter task conditions, and ensured proper dashboard directory setup." />
-    <option name="LAST_COMMIT_MESSAGE" value="Improved directory management and ownership for Prometheus and Grafana, refined exporter task conditions, and ensured proper dashboard directory setup." />
+    <MESSAGE value="Updated `when` clause usage across exporter and keepalived tasks to ensure consistent group handling and improve syntax clarity." />
+    <MESSAGE value="Enhanced failover and monitoring settings: adjusted `repmgr.conf` for faster failover, updated Keepalived configuration to prevent preemption, and improved PostgreSQL health checks for role-specific validation." />
+    <option name="LAST_COMMIT_MESSAGE" value="Enhanced failover and monitoring settings: adjusted `repmgr.conf` for faster failover, updated Keepalived configuration to prevent preemption, and improved PostgreSQL health checks for role-specific validation." />
   </component>
 </project>

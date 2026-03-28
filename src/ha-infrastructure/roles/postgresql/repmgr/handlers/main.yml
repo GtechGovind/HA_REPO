@@ -1,0 +1,10 @@
+# ==============================================================================
+# Repmgr Handlers
+# ==============================================================================
+
+- name: restart repmgrd
+  systemd:
+    name: repmgrd
+    state: restarted
+    daemon_reload: yes
+  when: postgresql_role == 'primary' or postgresql_role == 'standby' or (witness_for_postgresql | default(false))

@@ -158,3 +158,11 @@
     mode: '0755'
     owner: root
     group: root
+
+- name: Copy failover notification script
+  copy:
+    src: ../../../scripts/failover-notify.sh
+    dest: /opt/ha-infrastructure/scripts/failover-notify.sh
+    mode: '0755'
+    owner: root
+    group: root
