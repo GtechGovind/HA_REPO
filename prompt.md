@@ -1,120 +1,266 @@
-Build a complete production-grade High Availability (HA) infrastructure using Ansible for an on-premise environment (Ubuntu 25 compatible). The system must include application HA, PostgreSQL HA, monitoring, logging, auto-healing, and must be modular and reusable.
+Act as a senior DevOps architect with 15+ years of experience and design a **production-grade High Availability (HA) infrastructure using Ansible** for an **on-premise environment optimized for Ubuntu 25**.
 
-Architecture Requirements:
+This solution must be **infra-focused only** — it should NOT handle application deployment logic. Applications will run independently on internal ports and should be treated as external services.
 
-1. Application HA:
+The system must be **fully automated, modular, scalable, self-healing, highly configurable, and reusable across multiple systems (applications, databases, services)**.
 
-* Two application servers for now but should be scalable.
-* Multiple applications running on internal ports (e.g., 9090, 9091, 9092, and so on ...).
-* NGINX as an edge load balancer exposing ports (8080, 8081, 8082, and so on ...).
-* Keepalived to manage a floating IP (VIP) for failover between app servers.
-* Load balancing should distribute traffic across both servers (cross-node routing).
-* Health checks must be implemented to avoid routing to unhealthy nodes.
+---
 
-2. Real-Time File Sync:
+# 🎯 OBJECTIVE
 
-* Use lsyncd.
-* Sync application directories (e.g., /var/www) between app nodes in near real-time using SSH key-based auth.
+Build a reusable HA infrastructure platform that provides:
 
-3. Database HA (PostgreSQL):
+* Application-level High Availability (infra layer only)
+* PostgreSQL High Availability
+* Real-time file synchronization
+* Connection pooling (PgBouncer)
+* Observability (metrics, logs, dashboards)
+* Auto-healing (node rebuild)
+* Web-based DB management (pgAdmin)
+* Strong health checks
+* Security and production hardening
 
-* Two DB servers (1 primary, 1 standby) - should be scalable but it will always multiple of 2 so witness is required.
-* Streaming replication setup.
-* Use repmgr for automatic failover and cluster management.
-* Add a witness node (hosted on one of the app servers) to avoid split-brain.
-* Keepalived for DB VIP.
-* On primary failure:
+The platform should act as a **generic HA foundation** that any application can plug into.
 
-  * standby should auto-promote.
-  * VIP should move.
-* Old primary should automatically rejoin as standby after recovery.
+---
 
-4. Auto-Rebuild (Self-Healing):
+# 🏗️ ARCHITECTURE REQUIREMENTS
 
-* Implement a script + systemd service to:
-  * detect DB failure
-  * wipe corrupted data
-  * re-clone from current primary using pg_basebackup
-  * rejoin cluster using repmgr
-* Must run on boot and optionally via cron.
-* Must dynamically detect current primary (not hardcoded).
+## 1. Application HA Layer (Infra Only)
 
-5. PgBouncer:
+* Minimum **2 application nodes (scalable to N nodes)**.
+* Applications run externally on **internal ports (e.g., 9090, 9091, 9092, ...)**.
+* The system must NOT deploy or manage application code.
 
-* Install on app nodes.
-* Applications should connect via PgBouncer instead of PostgreSQL.
-* Use transaction pooling mode.
-* Configure connection limits and pooling parameters.
+### Responsibilities:
 
-6. Monitoring & Observability:
+* Use **NGINX as edge load balancer**:
 
-* Prometheus server (central).
-* Node exporter on all nodes.
-* PostgreSQL exporter.
-* NGINX exporter.
-* PgBouncer exporter.
-* Loki + Promtail for centralized logging.
+  * Expose configurable ports (8080, 8081, ...)
+  * Route traffic to internal services
+* Use **Keepalived**:
+
+  * Provide a **floating IP (VIP)**
+
+### Requirements:
+
+* Cross-node routing (load balancing across all nodes)
+* Health-based routing:
+
+  * If a service is unhealthy → no traffic
+* Support:
+
+  * dynamic upstream configuration
+  * easy addition/removal of nodes via inventory
+
+---
+
+## 2. Real-Time File Synchronization
+
+* Use **lsyncd**
+* Sync configurable directories (e.g., `/var/www`, `/opt/apps`)
+* Near real-time (inotify-based)
+* SSH key-based authentication
+
+---
+
+## 3. PostgreSQL HA Layer
+
+* Minimum **2 DB nodes (primary + standby)**
+* Must support scaling to multiple replicas
+
+### Must include:
+
+* Streaming replication
+* **repmgr** for cluster management
+* **witness node (on app server)** to prevent split-brain
+* **Keepalived for DB VIP**
+
+### Failover behavior:
+
+* Automatic standby promotion
+* VIP reassignment
+* Old primary auto-rejoins as standby
+
+---
+
+## 4. Auto-Healing (Self-Rebuild)
+
+Implement an automated DB recovery system:
+
+* Detect failure
+* Validate node role (avoid rebuilding primary)
+* Remove corrupted data
+* Re-clone from active primary
+* Rejoin via repmgr
+
+### Requirements:
+
+* Bash script + systemd
+* Runs:
+
+  * on boot
+  * via cron (optional)
+* Dynamic master detection
+* Logging enabled
+
+---
+
+## 5. PgBouncer (Connection Pooling)
+
+* Deploy on all app nodes
+* Apps connect via PgBouncer
+
+### Requirements:
+
+* Transaction pooling
+* Configurable limits
+* Multi-DB support
+* Secure authentication
+
+---
+
+## 6. Monitoring & Observability
+
+### Metrics:
+
+* Prometheus (central)
+* Exporters:
+
+  * node_exporter
+  * postgres_exporter
+  * nginx_exporter
+  * pgbouncer_exporter
+
+### Logging:
+
+* Loki + Promtail
+
+### Visualization:
+
 * Grafana dashboards:
 
-  * PostgreSQL (replication lag, QPS, locks)
-  * Node metrics (CPU, RAM, disk)
-  * NGINX (RPS, errors)
-  * PgBouncer (connections, pool usage)
-  * JVM metrics (if Spring Boot used)
+  * PostgreSQL metrics
+  * Node metrics
+  * NGINX metrics
+  * PgBouncer metrics
 
-7. Health Checks:
+---
 
-* Spring Boot: /actuator/health
-* Laravel: /health endpoint
-* PostgreSQL: pg_isready script
-* NGINX: /health endpoint
-* Integrate health checks into Keepalived and load balancing.
+## 7. Health Checks
 
-8. Security & Best Practices:
+Provide standardized health validation:
 
-* SSH key-based authentication
-* Restrict pg_hba.conf
+* HTTP-based health endpoints (configurable path like `/health`)
+* PostgreSQL → `pg_isready`
+
+### Integration:
+
+* NGINX upstream filtering
+* Keepalived failover decisions
+* Monitoring alerts
+
+---
+
+## 8. pgAdmin (DB Management)
+
+* Deploy pgAdmin (web UI)
+* Connect via DB VIP
+* Configurable:
+
+  * port
+  * credentials
+* Secure access (auth + optional IP restriction)
+
+---
+
+## 9. Security & Hardening
+
+* SSH key-based access only
+* Disable password login
+* Harden PostgreSQL access
 * Enable WAL archiving
-* Use pgBackRest for backups
-* Use systemd for all services
-* Add firewall rules
-* Ensure time sync
+* Integrate pgBackRest (design-level)
+* Firewall configuration
+* Time sync (chrony)
 
-9. Ansible Requirements:
+---
 
-* Fully modular role-based structure.
-* Separate roles for:
+## 10. Ansible Design
+
+### Roles:
+
+* common
+* keepalived
+* nginx_lb
+* lsyncd
+* pgbouncer
+* postgresql:
 
   * common
-  * keepalived
-  * nginx_lb
-  * lsyncd
-  * pgbouncer
-  * postgresql (common, primary, standby, repmgr, witness, auto_rebuild)
-  * monitoring (server/client)
-  * app (springboot/laravel placeholders)
-* Use templates for configs (Jinja2).
-* Use group_vars for configuration.
-* Inventory-based environment separation.
+  * primary
+  * standby
+  * repmgr
+  * witness
+  * auto_rebuild
+* monitoring:
 
-10. Deliverables:
+  * server
+  * client
+* pgadmin
 
-* Full directory structure.
-* All Ansible playbooks.
-* All role task files.
-* All templates (nginx, keepalived, pgbouncer, lsyncd, postgres configs).
-* Systemd service files.
-* Auto-rebuild script.
-* Prometheus config.
-* Example Grafana dashboards (JSON or description).
-* Clear comments in code.
+### Requirements:
 
-11. Additional Requirements:
+* Fully variable-driven
+* No hardcoded values
+* Jinja2 templates
+* Inventory-based scaling
+* Idempotent execution
 
-* Everything must be highly configurable via variables.
-* No hardcoded IPs (use inventory variables).
-* Should be reusable for future HA systems (DB, apps, etc.).
-* Follow production best practices and avoid shortcuts.
+---
 
-Goal:
-The system should be self-healing, highly available, observable, and production-ready with minimal manual intervention.
+## 11. Deliverables
+
+Provide:
+
+* Full Ansible project structure
+* Inventory
+* Playbooks
+* Roles (tasks + templates)
+* systemd services
+* Auto-rebuild script
+* Monitoring configs
+* pgAdmin setup
+* Documentation/comments
+
+---
+
+## 12. Additional Requirements
+
+* Easy horizontal scaling (add nodes via inventory)
+* Environment support (dev/stage/prod)
+* Configurable:
+
+  * ports
+  * users
+  * paths
+  * credentials
+* Reusable across:
+
+  * app clusters
+  * DB clusters
+  * future services
+
+---
+
+# 🚀 EXPECTED OUTCOME
+
+A **clean, infra-only HA platform** that:
+
+* Provides load balancing + failover
+* Manages DB HA fully
+* Self-heals nodes
+* Is observable and secure
+* Can be reused across multiple independent application systems
+
+This should reflect **real-world SRE-grade infrastructure design**, not a tightly coupled deployment setup.
