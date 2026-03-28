@@ -65,5 +65,5 @@
 
 - name: Debug keepalived service status
   debug:
-    msg: "Keepalived service is running: {{ keepalived_service.changed or 'running' in keepalived_service.status.ActiveState | default('') }}"
+    msg: "Keepalived service is running: {{ keepalived_service.changed or 'running' in (keepalived_service.status.ActiveState | default('')) }}"
   when: keepalived_service is defined and keepalived_service.status is defined

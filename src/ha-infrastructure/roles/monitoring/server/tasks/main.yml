@@ -219,7 +219,7 @@
 
 - name: Debug monitoring services status
   debug:
-    msg: "Monitoring service {{ item.item }} is running: {{ item.changed or 'running' in item.status.ActiveState | default('') }}"
+    msg: "Monitoring service {{ item.item }} is running: {{ item.changed or 'running' in (item.status.ActiveState | default('')) }}"
   loop: "{{ monitoring_services.results }}"
   when: 
     - monitoring_services is defined

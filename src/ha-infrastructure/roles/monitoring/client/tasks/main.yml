@@ -43,5 +43,5 @@
 
 - name: Debug promtail service status
   debug:
-    msg: "Promtail service is running: {{ promtail_service.changed or 'running' in promtail_service.status.ActiveState | default('') }}"
+    msg: "Promtail service is running: {{ promtail_service.changed or 'running' in (promtail_service.status.ActiveState | default('')) }}"
   when: promtail_service is defined and promtail_service.status is defined

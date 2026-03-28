@@ -54,7 +54,7 @@
 - name: Configure nginx-exporter
   copy:
     content: |
-      ARGS="-nginx.scrape-uri http://localhost:8080/status/format/json"
+      ARGS="-nginx.scrape-uri http://localhost:8888/status/format/json"
     dest: /etc/default/prometheus-nginx-exporter
   notify: restart nginx-exporter
   when: inventory_hostname in groups.get('app_nodes', [])
@@ -71,14 +71,14 @@
       when: "{{ inventory_hostname in groups.get('db_nodes', []) }}"
     - name: 'prometheus-nginx-exporter'
       when: "{{ inventory_hostname in groups.get('app_nodes', []) }}"
-  when: item.when
+  when: item.when | bool
   register: exporter_services
 
 - name: Debug exporter services status
   debug:
-    msg: "Exporter {{ item.item.name }} is running: {{ item.changed or 'running' in item.status.ActiveState | default('') }}"
+    msg: "Exporter {{ item.item.name }} is running: {{ item.changed or 'running' in (item.status.ActiveState | default('')) }}"
   loop: "{{ exporter_services.results }}"
   when:
     - exporter_services is defined
-    - item.item.when
+    - item.item.when | bool
     - item.status is defined

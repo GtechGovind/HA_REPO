@@ -30,9 +30,9 @@ vts_status_filter_by_host on;
     }
 {% endfor %}
 
-# Stub status for monitoring
+# Monitoring and Status server
 server {
-listen 8080;
+listen 8888;
 server_name _;
 
 location /nginx_status {
