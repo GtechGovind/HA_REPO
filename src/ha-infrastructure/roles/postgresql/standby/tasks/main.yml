@@ -48,8 +48,9 @@
 
 - name: Debug auto-rebuild timer status
   debug:
-    msg: "Auto-rebuild timer is {{ rebuild_timer.state }}"
+    msg: "Auto-rebuild timer is running: {{ rebuild_timer.changed or 'running' in rebuild_timer.status.ActiveState | default('') }}"
   when:
     - postgresql_role == 'standby'
     - rebuild_timer is defined
+    - rebuild_timer.status is defined
 

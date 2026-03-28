@@ -39,4 +39,5 @@
 
 - name: Debug witness PostgreSQL status
   debug:
-    msg: "PostgreSQL on witness is {{ witness_pg_service.state }}"
+    msg: "PostgreSQL on witness is running: {{ witness_pg_service.changed or 'running' in witness_pg_service.status.ActiveState | default('') }}"
+  when: witness_pg_service is defined and witness_pg_service.status is defined

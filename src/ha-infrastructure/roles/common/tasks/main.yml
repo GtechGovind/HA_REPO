@@ -101,7 +101,8 @@
 
 - name: Debug firewall status
   debug:
-    msg: "Firewall is enabled: {{ firewall_status.changed or firewall_status.state == 'enabled' }}"
+    msg: "Firewall is enabled: {{ firewall_status.changed or 'enabled' in firewall_status.stdout | default('') }}"
+  when: firewall_status is defined
 
 - name: Configure fail2ban
   template:

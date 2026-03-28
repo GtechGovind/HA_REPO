@@ -42,4 +42,5 @@
 
 - name: Debug Nginx service status
   debug:
-    msg: "Nginx service is {{ nginx_service.state }}"
+    msg: "Nginx service is running: {{ nginx_service.changed or 'running' in nginx_service.status.ActiveState | default('') }}"
+  when: nginx_service is defined and nginx_service.status is defined

@@ -46,8 +46,9 @@
 
 - name: Debug exporter services status
   debug:
-    msg: "Exporter {{ item.item.name }} is {{ item.state }}"
+    msg: "Exporter {{ item.item.name }} is running: {{ item.changed or 'running' in item.status.ActiveState | default('') }}"
   loop: "{{ exporter_services.results }}"
   when:
     - exporter_services is defined
     - item.item.when
+    - item.status is defined

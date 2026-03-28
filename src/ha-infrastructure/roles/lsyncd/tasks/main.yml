@@ -42,4 +42,5 @@
 
 - name: Debug lsyncd service status
   debug:
-    msg: "Lsyncd service is {{ lsyncd_service.state }}"
+    msg: "Lsyncd service is running: {{ lsyncd_service.changed or 'running' in lsyncd_service.status.ActiveState | default('') }}"
+  when: lsyncd_service is defined and lsyncd_service.status is defined

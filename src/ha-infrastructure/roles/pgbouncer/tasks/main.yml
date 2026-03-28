@@ -35,4 +35,5 @@
 
 - name: Debug PgBouncer service status
   debug:
-    msg: "PgBouncer service is {{ pgbouncer_service.state }}"
+    msg: "PgBouncer service is running: {{ pgbouncer_service.changed or 'running' in pgbouncer_service.status.ActiveState | default('') }}"
+  when: pgbouncer_service is defined and pgbouncer_service.status is defined
