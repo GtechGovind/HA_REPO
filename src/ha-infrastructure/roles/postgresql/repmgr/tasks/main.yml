@@ -73,6 +73,7 @@
   systemd:
     name: "postgresql@{{ postgresql.version }}-main"
     state: started
+    enabled: yes
   when: postgresql_role == 'standby'
 
 - name: Register standby node

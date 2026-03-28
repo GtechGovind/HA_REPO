@@ -259,13 +259,13 @@
     state: started
     daemon_reload: yes
   register: pg_start_result
-  when: postgresql_role == 'primary' or postgresql_role == 'standby'
+  when: postgresql_role == 'primary'
 
 - name: Debug PostgreSQL startup failure
   debug:
     var: pg_start_result
   when: 
-    - (postgresql_role == 'primary' or postgresql_role == 'standby')
+    - postgresql_role == 'primary'
     - pg_start_result is failed
 
 - name: Ensure main PostgreSQL service is disabled to avoid conflicts
@@ -282,21 +282,21 @@
     timeout: 90
   register: wait_result
   ignore_errors: yes
-  when: postgresql_role == 'primary' or postgresql_role == 'standby'
+  when: postgresql_role == 'primary'
 
 - name: Diagnostic - Check PostgreSQL service status
   systemd:
     name: "postgresql@{{ postgresql.version }}-main"
   register: pg_service_status
   when: 
-    - (postgresql_role == 'primary' or postgresql_role == 'standby')
+    - postgresql_role == 'primary'
     - wait_result is failed
 
 - name: Diagnostic - Debug PostgreSQL status
   debug:
     var: pg_service_status
   when: 
-    - (postgresql_role == 'primary' or postgresql_role == 'standby')
+    - postgresql_role == 'primary'
     - wait_result is failed
 
 - name: Diagnostic - Check PostgreSQL logs
@@ -305,7 +305,7 @@
     journalctl -u postgresql@{{ postgresql.version }}-main --no-pager -n 50
   register: pg_logs_diag
   when: 
-    - (postgresql_role == 'primary' or postgresql_role == 'standby')
+    - postgresql_role == 'primary'
     - wait_result is failed
   ignore_errors: yes
 
@@ -313,21 +313,21 @@
   debug:
     var: pg_logs_diag.stdout_lines
   when: 
-    - (postgresql_role == 'primary' or postgresql_role == 'standby')
+    - postgresql_role == 'primary'
     - wait_result is failed
 
 - name: Fail if PostgreSQL was not ready
   fail:
     msg: "PostgreSQL failed to become ready within timeout on localhost:{{ postgresql.port }}. Check the diagnostic logs above."
   when: 
-    - (postgresql_role == 'primary' or postgresql_role == 'standby')
+    - postgresql_role == 'primary'
     - wait_result is failed
 
 - name: Debug PostgreSQL readiness
   debug:
     msg: "PostgreSQL is ready on localhost:{{ postgresql.port }}"
   when: 
-    - (postgresql_role == 'primary' or postgresql_role == 'standby')
+    - postgresql_role == 'primary'
     - wait_result is succeeded
 
 - name: Create replication user

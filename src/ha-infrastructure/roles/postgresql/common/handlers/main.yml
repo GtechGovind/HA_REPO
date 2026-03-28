@@ -6,4 +6,6 @@
   service:
     name: "postgresql@{{ postgresql.version }}-main"
     state: restarted
-  when: postgresql_role == 'primary' or (clone_result is defined and clone_result.changed) or (pg_ready is defined and pg_ready.rc == 0)
+  when: 
+    - postgresql_role == 'primary' or (clone_result is defined and clone_result.changed) or (pg_ready is defined and pg_ready.rc == 0)
+    - not (postgresql_role == 'standby' and (clone_result is not defined or not clone_result.changed))
