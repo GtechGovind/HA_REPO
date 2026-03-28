@@ -11,7 +11,9 @@
     name: postgresql
     enabled: yes
     state: started
-  when: postgresql_role == 'standby'
+  when: 
+    - postgresql_role == 'standby'
+    - false # Managed by repmgr role during initial setup
 
 - name: Copy auto-rebuild script
   copy:

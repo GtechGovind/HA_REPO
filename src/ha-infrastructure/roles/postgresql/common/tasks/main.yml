@@ -51,15 +51,14 @@
   command: pg_dropcluster {{ postgresql.version }} main --stop
   when: 
     - pg_clusters.stdout is search(postgresql.version | string + " main")
-    - postgresql_role == 'primary'
   ignore_errors: yes
 
 - name: Initialize PostgreSQL data directory
   command: |
     pg_createcluster {{ postgresql.version }} main \
     --start-conf=auto \
-    --pgdata={{ postgresql.data_dir }} \
-    --waldir={{ postgresql.wal_dir }}
+    -d {{ postgresql.data_dir }} \
+    -- --waldir={{ postgresql.wal_dir }}
   args:
     creates: "{{ postgresql.data_dir }}/PG_VERSION"
   when: postgresql_role == 'primary'

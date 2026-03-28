@@ -25,6 +25,18 @@
   when: postgresql_role == 'primary'
   ignore_errors: yes
 
+- name: Stop PostgreSQL on standby before cloning
+  systemd:
+    name: postgresql
+    state: stopped
+  when: postgresql_role == 'standby'
+
+- name: Clear data directory on standby before cloning
+  file:
+    path: "{{ postgresql.data_dir }}"
+    state: absent
+  when: postgresql_role == 'standby'
+
 - name: Clone standby from primary
   command: |
     repmgr -h {{ groups['db_nodes'][0] }} \
@@ -35,6 +47,12 @@
   become_user: postgres
   when: postgresql_role == 'standby'
   ignore_errors: yes
+
+- name: Start PostgreSQL on standby after cloning
+  systemd:
+    name: postgresql
+    state: started
+  when: postgresql_role == 'standby'
 
 - name: Register standby node
   command: repmgr -f /etc/postgresql/{{ postgresql.version }}/main/repmgr.conf standby register
