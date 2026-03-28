@@ -14,8 +14,8 @@ ntp_servers:
 
 # Reinstallation and Cleanup Flags
 # Usage: ansible-playbook ... -e "infra_reinstall=true" -e "infra_cleanup_data=true"
-infra_reinstall: false
-infra_cleanup_data: false
+infra_reinstall: true
+infra_cleanup_data: true
 
 # Network settings for HA (VIPs)
 network:
