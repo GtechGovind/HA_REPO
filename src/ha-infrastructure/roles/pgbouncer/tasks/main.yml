@@ -10,7 +10,27 @@
 - name: Install PgBouncer
   apt:
     name: pgbouncer
-    state: present
+    state: latest
+    install_recommends: yes
+
+- name: Ensure pgbouncer user exists
+  user:
+    name: pgbouncer
+    system: yes
+    shell: /bin/false
+    home: /var/lib/pgbouncer
+    create_home: yes
+
+- name: Create pgbouncer directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: pgbouncer
+    group: pgbouncer
+    mode: '0750'
+  loop:
+    - /var/log/pgbouncer
+    - /var/run/pgbouncer
 
 - name: Force cleanup PgBouncer configuration for reinstallation
   file:

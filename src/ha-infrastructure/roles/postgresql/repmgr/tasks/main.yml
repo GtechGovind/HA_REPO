@@ -50,11 +50,13 @@
 
 - name: Clone standby from primary
   command: |
-    PGPASSWORD={{ vault_repmgr_password }} repmgr -h {{ groups['db_nodes'][0] }} \
+    repmgr -h {{ groups['db_nodes'][0] }} \
     -U repmgr \
     -d repmgr \
     -f /etc/postgresql/{{ postgresql.version }}/main/repmgr.conf \
     standby clone --force
+  environment:
+    PGPASSWORD: "{{ vault_repmgr_password }}"
   become_user: postgres
   when: postgresql_role == 'standby'
   register: clone_result
