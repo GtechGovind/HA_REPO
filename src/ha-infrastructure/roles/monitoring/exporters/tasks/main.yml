@@ -54,7 +54,11 @@
 - name: Configure nginx-exporter
   copy:
     content: |
+      {% if hostvars[inventory_hostname]['vts_module_check'] is defined and hostvars[inventory_hostname]['vts_module_check'].rc == 0 %}
       ARGS="-nginx.scrape-uri http://localhost:8888/status/format/json"
+      {% else %}
+      ARGS="-nginx.scrape-uri http://localhost:8888/status"
+      {% endif %}
     dest: /etc/default/prometheus-nginx-exporter
   notify: restart nginx-exporter
   when: inventory_hostname in groups.get('app_nodes', [])
