@@ -6,3 +6,4 @@
   service:
     name: "postgresql@{{ postgresql.version }}-main"
     state: restarted
+  when: postgresql_role == 'primary' or (clone_result is defined and clone_result.changed) or (pg_ready is defined and pg_ready.rc == 0)
