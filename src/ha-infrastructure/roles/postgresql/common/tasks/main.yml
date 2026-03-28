@@ -37,7 +37,6 @@
     mode: '0750'
   loop:
     - /var/log/postgresql
-    - /etc/postgresql/{{ postgresql.version }}/main/conf.d
 
 - name: Check if default PostgreSQL cluster exists
   shell: pg_lsclusters --no-header | grep -q "{{ postgresql.version }} .*main"
@@ -45,10 +44,25 @@
   changed_when: false
   failed_when: false
 
+- name: Stop PostgreSQL before dropping cluster
+  systemd:
+    name: postgresql
+    state: stopped
+  when: pg_clusters_check.rc == 0
+  ignore_errors: yes
+
 - name: Drop default PostgreSQL cluster to avoid conflicts
   command: pg_dropcluster {{ postgresql.version }} main --stop
-  when: pg_clusters_check.rc == 0 or pg_clusters_check.stderr is search('cluster.*already exists')
+  when: pg_clusters_check.rc == 0
   ignore_errors: yes
+
+- name: Remove stale PostgreSQL configuration directory if it exists
+  file:
+    path: "/etc/postgresql/{{ postgresql.version }}/main"
+    state: absent
+  when: 
+    - postgresql_role == 'primary'
+    - pg_clusters_check.rc == 0
 
 - name: Remove stale PostgreSQL data directory if it exists
   file:
@@ -59,7 +73,19 @@
     - "{{ postgresql.wal_dir }}"
   when: 
     - postgresql_role == 'primary'
-    - pg_clusters_check.rc == 0 or pg_clusters_check.stderr is search('cluster.*already exists')
+    - pg_clusters_check.rc == 0
+
+- name: Create PostgreSQL configuration directory
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: postgres
+    group: postgres
+    mode: '0755'
+  loop:
+    - "/etc/postgresql/{{ postgresql.version }}/main"
+    - "/etc/postgresql/{{ postgresql.version }}/main/conf.d"
+  when: postgresql_role == 'primary'
 
 - name: Create PostgreSQL data and wal directories
   file:
@@ -87,12 +113,18 @@
   template:
     src: postgresql.conf.j2
     dest: /etc/postgresql/{{ postgresql.version }}/main/postgresql.conf
+    owner: postgres
+    group: postgres
+    mode: '0644'
   notify: restart postgresql
 
 - name: Configure pg_hba.conf
   template:
     src: pg_hba.conf.j2
     dest: /etc/postgresql/{{ postgresql.version }}/main/pg_hba.conf
+    owner: postgres
+    group: postgres
+    mode: '0640'
   notify: restart postgresql
 
 - name: Ensure PostgreSQL service is started and enabled
