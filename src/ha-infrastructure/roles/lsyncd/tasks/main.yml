@@ -12,6 +12,12 @@
     name: lsyncd
     state: present
 
+- name: Force cleanup lsyncd configuration for reinstallation
+  file:
+    path: /etc/lsyncd/lsyncd.conf.lua
+    state: absent
+  when: infra_reinstall
+
 - name: Configure SSH key-based authentication for sync
   authorized_key:
     user: "{{ ansible_user }}"

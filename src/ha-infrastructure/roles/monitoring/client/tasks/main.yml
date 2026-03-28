@@ -12,6 +12,12 @@
     name: promtail
     state: present
 
+- name: Force cleanup Promtail configuration for reinstallation
+  file:
+    path: /etc/promtail/config.yml
+    state: absent
+  when: infra_reinstall
+
 - name: Configure Promtail
   template:
     src: promtail.yml.j2

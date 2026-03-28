@@ -12,6 +12,15 @@
     name: pgbouncer
     state: present
 
+- name: Force cleanup PgBouncer configuration for reinstallation
+  file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - /etc/pgbouncer/pgbouncer.ini
+    - /etc/pgbouncer/userlist.txt
+  when: infra_reinstall
+
 - name: Configure pgbouncer.ini
   template:
     src: pgbouncer.ini.j2

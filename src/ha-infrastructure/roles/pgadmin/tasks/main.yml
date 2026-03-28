@@ -22,6 +22,12 @@
       - python3-pexpect
     state: present
 
+- name: Force cleanup pgAdmin4 configuration for reinstallation
+  file:
+    path: /var/lib/pgadmin
+    state: absent
+  when: infra_reinstall or infra_cleanup_data
+
 - name: Configure pgAdmin4 (Web mode)
   expect:
     command: /usr/pgadmin4/bin/setup-web.sh --email {{ pgadmin_email | default('admin@example.com') }} --password {{ vault_pgadmin_password | default('admin') }}

@@ -14,6 +14,15 @@
       - prometheus-nginx-exporter
     state: present
 
+- name: Force cleanup Nginx configuration for reinstallation
+  file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - /etc/nginx/sites-available/ha-lb.conf
+    - /etc/nginx/sites-enabled/ha-lb.conf
+  when: infra_reinstall
+
 - name: Configure Nginx load balancer
   template:
     src: nginx-lb.conf.j2

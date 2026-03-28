@@ -12,6 +12,17 @@
     name: keepalived
     state: present
 
+- name: Force cleanup keepalived configuration for reinstallation
+  file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - /etc/keepalived/keepalived-app.conf
+    - /etc/keepalived/keepalived-db.conf
+    - /etc/keepalived/health-check.sh
+    - /etc/keepalived/notify.sh
+  when: infra_reinstall
+
 - name: Configure keepalived for application VIP
   template:
     src: keepalived-app.conf.j2

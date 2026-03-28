@@ -13,6 +13,15 @@
       - postgresql-{{ postgresql.version }}-repmgr
     state: present
 
+- name: Force cleanup witness PostgreSQL configuration for reinstallation
+  file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - "/etc/postgresql/{{ postgresql.version }}/main/repmgr.conf"
+    - "/var/lib/postgresql/{{ postgresql.version }}/main"
+  when: infra_reinstall or infra_cleanup_data
+
 - name: Create repmgr configuration for witness
   template:
     src: ../../repmgr/templates/repmgr.conf.j2

@@ -4,9 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4e5b88f0-7383-45f3-a30a-4b5b1413df28" name="Changes" comment="Standardized service status debug tasks across HA roles, added conditional checks for defined statuses, and improved safety with default value handling.">
+    <list default="true" id="4e5b88f0-7383-45f3-a30a-4b5b1413df28" name="Changes" comment="Enhanced PostgreSQL initialization: updated `shell` usage to handle non-critical failures gracefully, refined existence checks for initialization output, and improved task conditions.">
       <change beforePath="$PROJECT_DIR$/src/ha-infrastructure/roles/postgresql/common/tasks/main.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/ha-infrastructure/roles/postgresql/common/tasks/main.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ha-infrastructure/roles/postgresql/common/templates/postgresql.conf.j2" beforeDir="false" afterPath="$PROJECT_DIR$/src/ha-infrastructure/roles/postgresql/common/templates/postgresql.conf.j2" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -178,7 +177,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1774703992131</updated>
-      <workItem from="1774703993136" duration="13584000" />
+      <workItem from="1774703993136" duration="14066000" />
     </task>
     <task id="LOCAL-00001" summary="Refactored HA infrastructure requirements and production inventory file for improved clarity, reusability, and scalability">
       <option name="closed" value="true" />
@@ -300,7 +299,31 @@
       <option name="project" value="LOCAL" />
       <updated>1774720522762</updated>
     </task>
-    <option name="localTasksCounter" value="16" />
+    <task id="LOCAL-00016" summary="Refined PostgreSQL configuration template: standardized `max` logic for memory and worker settings, and removed redundant failure condition in tasks.">
+      <option name="closed" value="true" />
+      <created>1774720636305</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1774720636305</updated>
+    </task>
+    <task id="LOCAL-00017" summary="Improved PostgreSQL cluster management tasks: refined cluster existence check, enhanced debug output for better visibility, and updated conditions for safer default cluster cleanup.">
+      <option name="closed" value="true" />
+      <created>1774720773491</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1774720773491</updated>
+    </task>
+    <task id="LOCAL-00018" summary="Enhanced PostgreSQL initialization: updated `shell` usage to handle non-critical failures gracefully, refined existence checks for initialization output, and improved task conditions.">
+      <option name="closed" value="true" />
+      <created>1774720863346</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1774720863346</updated>
+    </task>
+    <option name="localTasksCounter" value="19" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -322,6 +345,9 @@
     <MESSAGE value="Refactored PostgreSQL cluster management: streamlined service handling, enhanced cleanup of default cluster configurations, and ensured robust initialization and readiness checks" />
     <MESSAGE value="Added debug tasks across HA roles to improve visibility into service status, cluster readiness, and configuration outputs. Enhanced safety with default values for PostgreSQL configuration settings." />
     <MESSAGE value="Standardized service status debug tasks across HA roles, added conditional checks for defined statuses, and improved safety with default value handling." />
-    <option name="LAST_COMMIT_MESSAGE" value="Standardized service status debug tasks across HA roles, added conditional checks for defined statuses, and improved safety with default value handling." />
+    <MESSAGE value="Refined PostgreSQL configuration template: standardized `max` logic for memory and worker settings, and removed redundant failure condition in tasks." />
+    <MESSAGE value="Improved PostgreSQL cluster management tasks: refined cluster existence check, enhanced debug output for better visibility, and updated conditions for safer default cluster cleanup." />
+    <MESSAGE value="Enhanced PostgreSQL initialization: updated `shell` usage to handle non-critical failures gracefully, refined existence checks for initialization output, and improved task conditions." />
+    <option name="LAST_COMMIT_MESSAGE" value="Enhanced PostgreSQL initialization: updated `shell` usage to handle non-critical failures gracefully, refined existence checks for initialization output, and improved task conditions." />
   </component>
 </project>

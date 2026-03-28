@@ -51,7 +51,14 @@
     pg_lsclusters --no-header | grep "{{ postgresql.version }} .*main" || true
   register: pg_clusters_check
   changed_when: false
-  when: postgresql_role == 'primary'
+  when: (postgresql_role == 'primary') or infra_reinstall
+
+- name: Force stop PostgreSQL for reinstallation
+  systemd:
+    name: postgresql
+    state: stopped
+  when: infra_reinstall
+  ignore_errors: yes
 
 - name: Debug PostgreSQL cluster check
   debug:
@@ -60,14 +67,15 @@
       - "Return code: {{ pg_clusters_check.rc | default('N/A') }}"
       - "Stdout: {{ pg_clusters_check.stdout | default('N/A') }}"
       - "Stderr: {{ pg_clusters_check.stderr | default('N/A') }}"
+      - "Infra Reinstall Flag: {{ infra_reinstall }}"
   when:
-    - postgresql_role == 'primary'
+    - (postgresql_role == 'primary') or infra_reinstall
     - pg_clusters_check is defined
 
 - name: Drop default PostgreSQL cluster to avoid conflicts
   command: pg_dropcluster {{ postgresql.version }} main --stop
   when:
-    - postgresql_role == 'primary'
+    - ((postgresql_role == 'primary') or infra_reinstall)
     - pg_clusters_check is defined
     - '"main" in pg_clusters_check.stdout'
   ignore_errors: yes
@@ -81,9 +89,8 @@
     - "/var/lib/postgresql/{{ postgresql.version }}/main"
     - "/var/log/postgresql/postgresql-{{ postgresql.version }}-main.log"
   when:
-    - postgresql_role == 'primary'
-    - pg_clusters_check is defined
-    - '"main" in pg_clusters_check.stdout'
+    - ((postgresql_role == 'primary') or infra_reinstall)
+    - (pg_clusters_check is defined and "main" in pg_clusters_check.stdout) or infra_reinstall
 
 - name: Remove stale PostgreSQL data directory if it exists
   file:
@@ -93,9 +100,8 @@
     - "{{ postgresql.data_dir }}"
     - "{{ postgresql.wal_dir }}"
   when:
-    - postgresql_role == 'primary'
-    - pg_clusters_check is defined
-    - '"main" in pg_clusters_check.stdout'
+    - ((postgresql_role == 'primary') or infra_reinstall)
+    - (pg_clusters_check is defined and "main" in pg_clusters_check.stdout) or infra_reinstall or infra_cleanup_data
 
 - name: Initialize PostgreSQL data directory
   shell: |

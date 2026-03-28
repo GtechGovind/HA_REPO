@@ -12,6 +12,11 @@ ntp_servers:
   - 0.pool.ntp.org
   - 1.pool.ntp.org
 
+# Reinstallation and Cleanup Flags
+# Usage: ansible-playbook ... -e "infra_reinstall=true" -e "infra_cleanup_data=true"
+infra_reinstall: false
+infra_cleanup_data: false
+
 # Network settings for HA (VIPs)
 network:
   vrrp_vid: 50

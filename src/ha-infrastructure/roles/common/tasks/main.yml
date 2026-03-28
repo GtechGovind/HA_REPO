@@ -123,6 +123,34 @@
     - /opt/ha-infrastructure/logs
     - /opt/ha-infrastructure/backups
 
+- name: Force cleanup of HA directories for reinstallation
+  file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - /opt/ha-infrastructure/scripts
+    - /opt/ha-infrastructure/logs
+  when: infra_reinstall
+
+- name: Cleanup HA backups if requested
+  file:
+    path: /opt/ha-infrastructure/backups
+    state: absent
+  when: infra_cleanup_data
+
+- name: Re-create cleaned directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+  loop:
+    - /opt/ha-infrastructure/scripts
+    - /opt/ha-infrastructure/logs
+    - /opt/ha-infrastructure/backups
+  when: infra_reinstall or infra_cleanup_data
+
 - name: Copy health check endpoint script
   copy:
     src: ../../../scripts/health-check-endpoint.py

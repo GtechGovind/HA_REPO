@@ -12,6 +12,12 @@
     name: prometheus-node-exporter
     state: present
 
+- name: Force cleanup exporters configuration for reinstallation
+  file:
+    path: /etc/default/prometheus-postgres-exporter
+    state: absent
+  when: infra_reinstall and "'db_nodes' in group_names"
+
 - name: Install postgres-exporter
   apt:
     name: prometheus-postgres-exporter

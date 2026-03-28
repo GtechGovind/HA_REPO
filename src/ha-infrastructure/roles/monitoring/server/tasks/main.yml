@@ -15,6 +15,25 @@
       - grafana
     state: present
 
+- name: Force cleanup monitoring configuration for reinstallation
+  file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - /etc/prometheus/prometheus.yml
+    - /etc/grafana/grafana.ini
+    - /etc/grafana/provisioning
+  when: infra_reinstall
+
+- name: Force cleanup monitoring data if requested
+  file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - /var/lib/prometheus
+    - /var/lib/grafana
+  when: infra_cleanup_data
+
 - name: Configure Prometheus
   template:
     src: prometheus.yml.j2
