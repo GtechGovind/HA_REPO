@@ -34,7 +34,7 @@
     src: keepalived-db.conf.j2
     dest: /etc/keepalived/keepalived-db.conf
   notify: restart keepalived
-  when: inventory_hostname in groups['db_nodes']
+  when: inventory_hostname in groups.get('db_nodes', [])
 
 - name: Create health check script
   template:

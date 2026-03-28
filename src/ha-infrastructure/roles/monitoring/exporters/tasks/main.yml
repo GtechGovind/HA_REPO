@@ -16,26 +16,26 @@
   file:
     path: /etc/default/prometheus-postgres-exporter
     state: absent
-  when: infra_reinstall and inventory_hostname in groups['db_nodes']
+  when: infra_reinstall and inventory_hostname in groups.get('db_nodes', [])
 
 - name: Install postgres-exporter
   apt:
     name: prometheus-postgres-exporter
     state: present
-  when: inventory_hostname in groups['db_nodes']
+  when: inventory_hostname in groups.get('db_nodes', [])
 
 - name: Configure postgres-exporter
   template:
     src: postgres_exporter.env.j2
     dest: /etc/default/prometheus-postgres-exporter
   notify: restart postgres-exporter
-  when: inventory_hostname in groups['db_nodes']
+  when: inventory_hostname in groups.get('db_nodes', [])
 
 - name: Install nginx-exporter
   apt:
     name: prometheus-nginx-exporter
     state: present
-  when: inventory_hostname in groups['app_nodes']
+  when: inventory_hostname in groups.get('app_nodes', [])
   notify: restart nginx-exporter
 
 - name: Ensure exporters are started and enabled
@@ -47,9 +47,9 @@
     - name: 'prometheus-node-exporter'
       when: true
     - name: 'prometheus-postgres-exporter'
-      when: inventory_hostname in groups['db_nodes']
+      when: "{{ inventory_hostname in groups.get('db_nodes', []) }}"
     - name: 'prometheus-nginx-exporter'
-      when: inventory_hostname in groups['app_nodes']
+      when: "{{ inventory_hostname in groups.get('app_nodes', []) }}"
   when: item.when
   register: exporter_services
 
