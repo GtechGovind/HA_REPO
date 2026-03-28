@@ -69,7 +69,7 @@ monitoring:
   prometheus_port: 9090
   prometheus_retention: 30d
   grafana_port: 3000
-  grafana_admin_password: "{{ vault_grafana_password | default('admin') }}"
+  grafana_admin_password: "{{ vault_grafana_password }}"
   alertmanager_port: 9093
   alertmanager_receivers:
     - email: "support@atekpayments.com"
@@ -79,6 +79,15 @@ monitoring:
   promtail_port: 9080
   loki_port: 3100
   pgbouncer_exporter_port: 9127
+
+# Vault Passwords (with defaults for non-vault environments)
+vault_postgres_password: "{{ vault_postgres_password_val | default('postgres_password') }}"
+vault_replication_password: "{{ vault_replication_password_val | default('replication_password') }}"
+vault_repmgr_password: "{{ vault_repmgr_password_val | default('repmgr_password') }}"
+vault_pgbouncer_password: "{{ vault_pgbouncer_password_val | default('pgbouncer_password') }}"
+vault_keepalived_password: "{{ vault_keepalived_password_val | default('vrrp_password') }}"
+vault_pgadmin_password: "{{ vault_pgadmin_password_val | default('pgadmin_admin_password') }}"
+vault_grafana_password: "{{ vault_grafana_password_val | default('admin') }}"
 
 # Security and Hardening
 security:
