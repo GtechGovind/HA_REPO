@@ -4,9 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4e5b88f0-7383-45f3-a30a-4b5b1413df28" name="Changes" comment="Updated production inventory to define default Vault passwords and adjusted Grafana admin password handling">
-      <change beforePath="$PROJECT_DIR$/src/ha-infrastructure/roles/monitoring/exporters/tasks/main.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/ha-infrastructure/roles/monitoring/exporters/tasks/main.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ha-infrastructure/roles/nginx_lb/tasks/main.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/ha-infrastructure/roles/nginx_lb/tasks/main.yml" afterDir="false" />
+    <list default="true" id="4e5b88f0-7383-45f3-a30a-4b5b1413df28" name="Changes" comment="Replaced Nginx VTS exporter with Prometheus Nginx exporter across roles, updated inventory variables, and added service handlers">
+      <change beforePath="$PROJECT_DIR$/src/ha-infrastructure/roles/nginx_lb/templates/nginx-lb.conf.j2" beforeDir="false" afterPath="$PROJECT_DIR$/src/ha-infrastructure/roles/nginx_lb/templates/nginx-lb.conf.j2" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -178,7 +177,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1774703992131</updated>
-      <workItem from="1774703993136" duration="11234000" />
+      <workItem from="1774703993136" duration="11610000" />
     </task>
     <task id="LOCAL-00001" summary="Refactored HA infrastructure requirements and production inventory file for improved clarity, reusability, and scalability">
       <option name="closed" value="true" />
@@ -204,7 +203,23 @@
       <option name="project" value="LOCAL" />
       <updated>1774718089038</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Added Nginx and VTS Exporter PPAs to HA infrastructure roles">
+      <option name="closed" value="true" />
+      <created>1774718241570</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1774718241570</updated>
+    </task>
+    <task id="LOCAL-00005" summary="Replaced Nginx VTS exporter with Prometheus Nginx exporter across roles, updated inventory variables, and added service handlers">
+      <option name="closed" value="true" />
+      <created>1774718389448</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1774718389448</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -215,6 +230,8 @@
     <MESSAGE value="Added handlers for service restarts across roles and updated production inventory variable for clarity" />
     <MESSAGE value="Updated production inventory to remove default fallback for Grafana admin password and added vault password variables with defaults for non-vault environments" />
     <MESSAGE value="Updated production inventory to define default Vault passwords and adjusted Grafana admin password handling" />
-    <option name="LAST_COMMIT_MESSAGE" value="Updated production inventory to define default Vault passwords and adjusted Grafana admin password handling" />
+    <MESSAGE value="Added Nginx and VTS Exporter PPAs to HA infrastructure roles" />
+    <MESSAGE value="Replaced Nginx VTS exporter with Prometheus Nginx exporter across roles, updated inventory variables, and added service handlers" />
+    <option name="LAST_COMMIT_MESSAGE" value="Replaced Nginx VTS exporter with Prometheus Nginx exporter across roles, updated inventory variables, and added service handlers" />
   </component>
 </project>

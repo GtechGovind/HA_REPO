@@ -24,7 +24,7 @@
       - postgresql-{{ postgresql.version }}
       - postgresql-contrib-{{ postgresql.version }}
       - postgresql-{{ postgresql.version }}-repmgr
-      - postgresql-{{ postgresql.version }}-pgbackrest
+      - pgbackrest
       - postgresql-{{ postgresql.version }}-wal2json
     state: present
 
