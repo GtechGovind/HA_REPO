@@ -127,7 +127,6 @@
   failed_when:
     - init_result.rc != 0
     - '"already exists" not in init_result.stderr'
-    - init_result.rc != 0
 
 - name: Debug PostgreSQL data directory initialization
   debug:
