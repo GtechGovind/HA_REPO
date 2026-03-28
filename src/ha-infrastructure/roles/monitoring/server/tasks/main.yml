@@ -44,6 +44,18 @@
     - /var/lib/grafana
   when: infra_cleanup_data
 
+- name: Ensure monitoring data directories exist with correct ownership
+  file:
+    path: "{{ item.path }}"
+    state: directory
+    owner: "{{ item.owner }}"
+    group: "{{ item.group }}"
+    mode: "{{ item.mode | default('0755') }}"
+    recurse: yes
+  loop:
+    - { path: '/var/lib/prometheus', owner: 'prometheus', group: 'prometheus' }
+    - { path: '/var/lib/grafana', owner: 'grafana', group: 'grafana' }
+
 - name: Configure Prometheus
   template:
     src: prometheus.yml.j2
@@ -66,7 +78,14 @@
   loop:
     - /etc/grafana/provisioning/datasources
     - /etc/grafana/provisioning/dashboards
-    - /var/lib/grafana/dashboards
+
+- name: Create Grafana dashboard directory
+  file:
+    path: /var/lib/grafana/dashboards
+    state: directory
+    owner: grafana
+    group: grafana
+    mode: '0755'
 
 - name: Configure Grafana datasources
   template:
@@ -84,7 +103,7 @@
   copy:
     src: dashboards/
     dest: /var/lib/grafana/dashboards/
-    owner: root
+    owner: grafana
     group: grafana
     mode: '0640'
   notify: restart grafana
