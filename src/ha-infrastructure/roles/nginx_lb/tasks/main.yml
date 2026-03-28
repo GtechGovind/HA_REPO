@@ -11,7 +11,6 @@
   apt:
     name:
       - nginx
-      - prometheus-nginx-exporter
     state: present
   notify: restart nginx
 
@@ -21,11 +20,20 @@
   ignore_errors: yes
   changed_when: false
 
-- name: Install Nginx VTS module if available
+- name: Install Nginx VTS module and exporter if available
   apt:
-    name: libnginx-mod-http-vts
+    name:
+      - libnginx-mod-http-vts
+      - prometheus-nginx-exporter
     state: present
   when: vts_module_check.rc == 0
+  notify: restart nginx
+
+- name: Install Nginx exporter if VTS is NOT available
+  apt:
+    name: prometheus-nginx-exporter
+    state: present
+  when: vts_module_check.rc != 0
   notify: restart nginx
 
 - name: Force cleanup Nginx configuration for reinstallation

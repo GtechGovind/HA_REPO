@@ -57,7 +57,7 @@
       {% if hostvars[inventory_hostname]['vts_module_check'] is defined and hostvars[inventory_hostname]['vts_module_check'].rc == 0 %}
       ARGS="-nginx.scrape-uri http://localhost:8888/status/format/json"
       {% else %}
-      ARGS="-nginx.scrape-uri http://localhost:8888/status"
+      ARGS="-nginx.scrape-uri http://localhost:8888/nginx_status"
       {% endif %}
     dest: /etc/default/prometheus-nginx-exporter
   notify: restart nginx-exporter
