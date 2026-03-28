@@ -4,12 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4e5b88f0-7383-45f3-a30a-4b5b1413df28" name="Changes" comment="Created PostgreSQL data and WAL directories during primary role setup with strict permissions to ensure proper initialization">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ha-infrastructure/roles/postgresql/common/handlers/main.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/ha-infrastructure/roles/postgresql/common/handlers/main.yml" afterDir="false" />
+    <list default="true" id="4e5b88f0-7383-45f3-a30a-4b5b1413df28" name="Changes" comment="Removed unused PostgreSQL readiness wait task for cleaner and more efficient role execution.">
       <change beforePath="$PROJECT_DIR$/src/ha-infrastructure/roles/postgresql/common/tasks/main.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/ha-infrastructure/roles/postgresql/common/tasks/main.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ha-infrastructure/roles/postgresql/repmgr/tasks/main.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/ha-infrastructure/roles/postgresql/repmgr/tasks/main.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ha-infrastructure/roles/postgresql/witness/tasks/main.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/ha-infrastructure/roles/postgresql/witness/tasks/main.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ha-infrastructure/roles/postgresql/common/templates/postgresql.conf.j2" beforeDir="false" afterPath="$PROJECT_DIR$/src/ha-infrastructure/roles/postgresql/common/templates/postgresql.conf.j2" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -181,7 +178,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1774703992131</updated>
-      <workItem from="1774703993136" duration="15578000" />
+      <workItem from="1774703993136" duration="16097000" />
     </task>
     <task id="LOCAL-00001" summary="Refactored HA infrastructure requirements and production inventory file for improved clarity, reusability, and scalability">
       <option name="closed" value="true" />
@@ -375,14 +372,29 @@
       <option name="project" value="LOCAL" />
       <updated>1774722295692</updated>
     </task>
-    <option name="localTasksCounter" value="25" />
+    <task id="LOCAL-00025" summary="Refactored PostgreSQL service management: standardized use of cluster-specific services, added service file fixes, enabled reinstallation tasks, and improved clarity in task conditions.">
+      <option name="closed" value="true" />
+      <created>1774722635761</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1774722635761</updated>
+    </task>
+    <task id="LOCAL-00026" summary="Removed unused PostgreSQL readiness wait task for cleaner and more efficient role execution.">
+      <option name="closed" value="true" />
+      <created>1774722860518</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1774722860518</updated>
+    </task>
+    <option name="localTasksCounter" value="27" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Refactored HA infrastructure requirements and production inventory file for improved clarity, reusability, and scalability" />
     <MESSAGE value="Added handlers for service restarts across roles and updated production inventory variable for clarity" />
     <MESSAGE value="Updated production inventory to remove default fallback for Grafana admin password and added vault password variables with defaults for non-vault environments" />
     <MESSAGE value="Updated production inventory to define default Vault passwords and adjusted Grafana admin password handling" />
@@ -406,6 +418,8 @@
     <MESSAGE value="Removed redundant condition for directory creation in PostgreSQL role." />
     <MESSAGE value="Removed redundant `when` conditions for improved task clarity and consistency across PostgreSQL roles." />
     <MESSAGE value="Created PostgreSQL data and WAL directories during primary role setup with strict permissions to ensure proper initialization" />
-    <option name="LAST_COMMIT_MESSAGE" value="Created PostgreSQL data and WAL directories during primary role setup with strict permissions to ensure proper initialization" />
+    <MESSAGE value="Refactored PostgreSQL service management: standardized use of cluster-specific services, added service file fixes, enabled reinstallation tasks, and improved clarity in task conditions." />
+    <MESSAGE value="Removed unused PostgreSQL readiness wait task for cleaner and more efficient role execution." />
+    <option name="LAST_COMMIT_MESSAGE" value="Removed unused PostgreSQL readiness wait task for cleaner and more efficient role execution." />
   </component>
 </project>

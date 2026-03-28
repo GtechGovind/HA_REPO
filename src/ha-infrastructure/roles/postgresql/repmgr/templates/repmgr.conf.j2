@@ -3,7 +3,7 @@
 # ==============================================================================
 node_id={{ postgresql_id }}
 node_name='{{ inventory_hostname }}'
-conninfo='host={{ ansible_host }} user=repmgr dbname=repmgr connect_timeout=2'
+conninfo='host={{ ansible_host }} user=repmgr dbname=repmgr connect_timeout=2 password={{ vault_repmgr_password }}'
 data_directory='{{ postgresql.data_dir }}'
 
 # Failover settings

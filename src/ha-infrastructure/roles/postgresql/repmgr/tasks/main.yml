@@ -50,7 +50,7 @@
 
 - name: Clone standby from primary
   command: |
-    repmgr -h {{ groups['db_nodes'][0] }} \
+    PGPASSWORD={{ vault_repmgr_password }} repmgr -h {{ groups['db_nodes'][0] }} \
     -U repmgr \
     -d repmgr \
     -f /etc/postgresql/{{ postgresql.version }}/main/repmgr.conf \
