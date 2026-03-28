@@ -92,6 +92,14 @@
   loop: "{{ security.allowed_ports }}"
   when: security.firewall_enabled
 
+- name: Ensure SSH is always allowed before enabling firewall
+  ufw:
+    rule: allow
+    port: "{{ security.ssh_port | default('22') }}"
+    proto: tcp
+    comment: "HA-INFRA: Safety SSH Rule"
+  when: security.firewall_enabled
+
 - name: Enable firewall
   ufw:
     state: enabled

@@ -4,18 +4,17 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4e5b88f0-7383-45f3-a30a-4b5b1413df28" name="Changes" comment="Enhanced Repmgr configuration and management: added logging and failover settings, enabled `repmgrd` with role-based defaults, improved service handling, and ensured failover notification script setup.">
+    <list default="true" id="4e5b88f0-7383-45f3-a30a-4b5b1413df28" name="Changes" comment="Integrated advanced monitoring and failover features: revamped Keepalived configuration with role-specific logic, introduced LokI setup for log aggregation, enhanced Prometheus exporters and dashboards with additional metrics, updated `when` clauses for consistency, and enabled detailed PostgreSQL health checks and replication monitoring.">
       <change beforePath="$PROJECT_DIR$/src/ha-infrastructure/roles/keepalived/tasks/main.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/ha-infrastructure/roles/keepalived/tasks/main.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ha-infrastructure/roles/monitoring/exporters/handlers/main.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/ha-infrastructure/roles/monitoring/exporters/handlers/main.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ha-infrastructure/roles/lsyncd/tasks/main.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/ha-infrastructure/roles/lsyncd/tasks/main.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ha-infrastructure/roles/monitoring/client/tasks/main.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/ha-infrastructure/roles/monitoring/client/tasks/main.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/ha-infrastructure/roles/monitoring/exporters/tasks/main.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/ha-infrastructure/roles/monitoring/exporters/tasks/main.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ha-infrastructure/roles/monitoring/exporters/templates/postgres_exporter.env.j2" beforeDir="false" afterPath="$PROJECT_DIR$/src/ha-infrastructure/roles/monitoring/exporters/templates/postgres_exporter.env.j2" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ha-infrastructure/roles/monitoring/server/files/dashboards/nginx-vts-overview.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/ha-infrastructure/roles/monitoring/server/files/dashboards/nginx-vts-overview.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ha-infrastructure/roles/monitoring/server/files/dashboards/postgresql-overview.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/ha-infrastructure/roles/monitoring/server/files/dashboards/postgresql-overview.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ha-infrastructure/roles/monitoring/server/files/dashboards/system-metrics.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/ha-infrastructure/roles/monitoring/server/files/dashboards/system-metrics.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ha-infrastructure/roles/monitoring/server/handlers/main.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/ha-infrastructure/roles/monitoring/server/handlers/main.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/ha-infrastructure/roles/monitoring/server/tasks/main.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/ha-infrastructure/roles/monitoring/server/tasks/main.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ha-infrastructure/roles/monitoring/server/templates/provisioning/datasources/prometheus.yml.j2" beforeDir="false" afterPath="$PROJECT_DIR$/src/ha-infrastructure/roles/monitoring/server/templates/provisioning/datasources/prometheus.yml.j2" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ha-infrastructure/roles/nginx_lb/handlers/main.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/ha-infrastructure/roles/nginx_lb/handlers/main.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ha-infrastructure/roles/nginx_lb/tasks/main.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/ha-infrastructure/roles/nginx_lb/tasks/main.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/ha-infrastructure/roles/nginx_lb/templates/nginx-lb.conf.j2" beforeDir="false" afterPath="$PROJECT_DIR$/src/ha-infrastructure/roles/nginx_lb/templates/nginx-lb.conf.j2" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ha-infrastructure/roles/pgbouncer/tasks/main.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/ha-infrastructure/roles/pgbouncer/tasks/main.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ha-infrastructure/roles/postgresql/repmgr/templates/repmgr.conf.j2" beforeDir="false" afterPath="$PROJECT_DIR$/src/ha-infrastructure/roles/postgresql/repmgr/templates/repmgr.conf.j2" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -187,7 +186,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1774703992131</updated>
-      <workItem from="1774703993136" duration="21737000" />
+      <workItem from="1774703993136" duration="22100000" />
     </task>
     <task id="LOCAL-00001" summary="Refactored HA infrastructure requirements and production inventory file for improved clarity, reusability, and scalability">
       <option name="closed" value="true" />
@@ -517,14 +516,21 @@
       <option name="project" value="LOCAL" />
       <updated>1774728667176</updated>
     </task>
-    <option name="localTasksCounter" value="42" />
+    <task id="LOCAL-00042" summary="Integrated advanced monitoring and failover features: revamped Keepalived configuration with role-specific logic, introduced LokI setup for log aggregation, enhanced Prometheus exporters and dashboards with additional metrics, updated `when` clauses for consistency, and enabled detailed PostgreSQL health checks and replication monitoring.">
+      <option name="closed" value="true" />
+      <created>1774729348092</created>
+      <option name="number" value="00042" />
+      <option name="presentableId" value="LOCAL-00042" />
+      <option name="project" value="LOCAL" />
+      <updated>1774729348092</updated>
+    </task>
+    <option name="localTasksCounter" value="43" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Enhanced PostgreSQL initialization: updated `shell` usage to handle non-critical failures gracefully, refined existence checks for initialization output, and improved task conditions." />
     <MESSAGE value="Enhanced PostgreSQL initialization: improved readiness checks with extended diagnostics, refined directory creation tasks, and adjusted wait conditions for robustness." />
     <MESSAGE value="Added reinstallation and cleanup tasks across roles: implemented conditional configuration cleanup, extended data directory handling, and ensured safe reinitialization." />
     <MESSAGE value="Enabled reinstallation and cleanup flags for infrastructure tasks in production environment." />
@@ -549,6 +555,7 @@
     <MESSAGE value="Enhanced failover and monitoring settings: adjusted `repmgr.conf` for faster failover, updated Keepalived configuration to prevent preemption, and improved PostgreSQL health checks for role-specific validation." />
     <MESSAGE value="Added repmgrd service management and logging settings: updated `repmgr.conf` with logging configuration and service commands, enabled and ensured `repmgrd` is started for primary, standby, and witness nodes." />
     <MESSAGE value="Enhanced Repmgr configuration and management: added logging and failover settings, enabled `repmgrd` with role-based defaults, improved service handling, and ensured failover notification script setup." />
-    <option name="LAST_COMMIT_MESSAGE" value="Enhanced Repmgr configuration and management: added logging and failover settings, enabled `repmgrd` with role-based defaults, improved service handling, and ensured failover notification script setup." />
+    <MESSAGE value="Integrated advanced monitoring and failover features: revamped Keepalived configuration with role-specific logic, introduced LokI setup for log aggregation, enhanced Prometheus exporters and dashboards with additional metrics, updated `when` clauses for consistency, and enabled detailed PostgreSQL health checks and replication monitoring." />
+    <option name="LAST_COMMIT_MESSAGE" value="Integrated advanced monitoring and failover features: revamped Keepalived configuration with role-specific logic, introduced LokI setup for log aggregation, enhanced Prometheus exporters and dashboards with additional metrics, updated `when` clauses for consistency, and enabled detailed PostgreSQL health checks and replication monitoring." />
   </component>
 </project>
