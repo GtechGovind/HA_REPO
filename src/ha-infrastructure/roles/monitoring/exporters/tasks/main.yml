@@ -44,9 +44,12 @@
     enabled: yes
     state: started
   loop:
-    - { name: 'prometheus-node-exporter', when: true }
-    - { name: 'prometheus-postgres-exporter', when: inventory_hostname in groups['db_nodes'] }
-    - { name: 'prometheus-nginx-exporter', when: inventory_hostname in groups['app_nodes'] }
+    - name: 'prometheus-node-exporter'
+      when: true
+    - name: 'prometheus-postgres-exporter'
+      when: "{{ inventory_hostname in groups['db_nodes'] }}"
+    - name: 'prometheus-nginx-exporter'
+      when: "{{ inventory_hostname in groups['app_nodes'] }}"
   when: item.when
   register: exporter_services
 

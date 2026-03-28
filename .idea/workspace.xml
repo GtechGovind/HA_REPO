@@ -4,14 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4e5b88f0-7383-45f3-a30a-4b5b1413df28" name="Changes" comment="Added `repmgr` replication entry to `pg_hba.conf` template for trusted subnets.">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ha-infrastructure/inventory/production/hosts.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/ha-infrastructure/inventory/production/hosts.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ha-infrastructure/roles/postgresql/common/templates/postgresql.conf.j2" beforeDir="false" afterPath="$PROJECT_DIR$/src/ha-infrastructure/roles/postgresql/common/templates/postgresql.conf.j2" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ha-infrastructure/roles/postgresql/primary/tasks/main.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/ha-infrastructure/roles/postgresql/primary/tasks/main.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ha-infrastructure/roles/postgresql/repmgr/tasks/main.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/ha-infrastructure/roles/postgresql/repmgr/tasks/main.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ha-infrastructure/roles/postgresql/repmgr/templates/repmgr.conf.j2" beforeDir="false" afterPath="$PROJECT_DIR$/src/ha-infrastructure/roles/postgresql/repmgr/templates/repmgr.conf.j2" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ha-infrastructure/roles/postgresql/witness/tasks/main.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/ha-infrastructure/roles/postgresql/witness/tasks/main.yml" afterDir="false" />
+    <list default="true" id="4e5b88f0-7383-45f3-a30a-4b5b1413df28" name="Changes" comment="Added Grafana repository and GPG key setup to monitoring server and client roles.">
+      <change beforePath="$PROJECT_DIR$/src/ha-infrastructure/roles/monitoring/exporters/tasks/main.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/ha-infrastructure/roles/monitoring/exporters/tasks/main.yml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -183,7 +177,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1774703992131</updated>
-      <workItem from="1774703993136" duration="17746000" />
+      <workItem from="1774703993136" duration="18334000" />
     </task>
     <task id="LOCAL-00001" summary="Refactored HA infrastructure requirements and production inventory file for improved clarity, reusability, and scalability">
       <option name="closed" value="true" />
@@ -449,15 +443,29 @@
       <option name="project" value="LOCAL" />
       <updated>1774724414365</updated>
     </task>
-    <option name="localTasksCounter" value="34" />
+    <task id="LOCAL-00034" summary="Enhanced PostgreSQL replication setup: adjusted replication slot calculations, enabled replication slot usage in `repmgr.conf`, refined replication slot creation logic, and improved witness node configuration.">
+      <option name="closed" value="true" />
+      <created>1774724807332</created>
+      <option name="number" value="00034" />
+      <option name="presentableId" value="LOCAL-00034" />
+      <option name="project" value="LOCAL" />
+      <updated>1774724807332</updated>
+    </task>
+    <task id="LOCAL-00035" summary="Added Grafana repository and GPG key setup to monitoring server and client roles.">
+      <option name="closed" value="true" />
+      <created>1774725035014</created>
+      <option name="number" value="00035" />
+      <option name="presentableId" value="LOCAL-00035" />
+      <option name="project" value="LOCAL" />
+      <updated>1774725035014</updated>
+    </task>
+    <option name="localTasksCounter" value="36" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Enhanced PostgreSQL cluster management: adjusted initialization commands, refined standby setup, and added data directory handling during standby cloning" />
-    <MESSAGE value="Refactored PostgreSQL cluster management to improve cluster checks and conflict resolution; ensured /etc/hosts entries for all hosts are present in common tasks" />
     <MESSAGE value="Refactored PostgreSQL cluster management: improved directory handling, enhanced default cluster cleanup, and ensured proper data directory initialization" />
     <MESSAGE value="Refactored PostgreSQL cluster management: improved default cluster cleanup, enhanced directory handling, and ensured proper configuration and permissions for key directories and files" />
     <MESSAGE value="Refactored PostgreSQL cluster management: streamlined service handling, enhanced cleanup of default cluster configurations, and ensured robust initialization and readiness checks" />
@@ -481,6 +489,8 @@
     <MESSAGE value="Enhanced PostgreSQL configuration and tasks: added SSH setup for rsync archiving, ensured `.ssh` directory creation for `postgres` user, and updated `archive_command` to handle failures gracefully." />
     <MESSAGE value="Refined task conditions for PostgreSQL roles: removed standby-related checks where unnecessary and ensured consistency in service management and diagnostics." />
     <MESSAGE value="Added `repmgr` replication entry to `pg_hba.conf` template for trusted subnets." />
-    <option name="LAST_COMMIT_MESSAGE" value="Added `repmgr` replication entry to `pg_hba.conf` template for trusted subnets." />
+    <MESSAGE value="Enhanced PostgreSQL replication setup: adjusted replication slot calculations, enabled replication slot usage in `repmgr.conf`, refined replication slot creation logic, and improved witness node configuration." />
+    <MESSAGE value="Added Grafana repository and GPG key setup to monitoring server and client roles." />
+    <option name="LAST_COMMIT_MESSAGE" value="Added Grafana repository and GPG key setup to monitoring server and client roles." />
   </component>
 </project>
