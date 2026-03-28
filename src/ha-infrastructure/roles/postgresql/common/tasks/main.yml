@@ -103,6 +103,18 @@
     - ((postgresql_role == 'primary') or infra_reinstall)
     - (pg_clusters_check is defined and "main" in pg_clusters_check.stdout) or infra_reinstall or infra_cleanup_data
 
+- name: Create PostgreSQL data and wal directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: postgres
+    group: postgres
+    mode: '0700'
+  loop:
+    - "{{ postgresql.data_dir }}"
+    - "{{ postgresql.wal_dir }}"
+  when: postgresql_role == 'primary'
+
 - name: Initialize PostgreSQL data directory
   shell: |
     pg_createcluster {{ postgresql.version }} main \
