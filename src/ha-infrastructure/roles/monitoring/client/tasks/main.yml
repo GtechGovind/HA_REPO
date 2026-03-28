@@ -7,6 +7,16 @@
 #              - Configures log targets for Loki.
 # ==============================================================================
 
+- name: Add Grafana repository key
+  shell: curl -fsSL https://apt.grafana.com/gpg.key | gpg --dearmor -o /usr/share/keyrings/grafana.gpg
+  args:
+    creates: /usr/share/keyrings/grafana.gpg
+
+- name: Add Grafana official repository
+  apt_repository:
+    repo: "deb [signed-by=/usr/share/keyrings/grafana.gpg] https://apt.grafana.com stable main"
+    state: present
+
 - name: Install Promtail
   apt:
     name: promtail
