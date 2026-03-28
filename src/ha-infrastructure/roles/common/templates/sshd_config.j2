@@ -1,0 +1,18 @@
+# SSH Server Configuration
+Port 22
+Protocol 2
+HostKey /etc/ssh/ssh_host_rsa_key
+HostKey /etc/ssh/ssh_host_ecdsa_key
+HostKey /etc/ssh/ssh_host_ed25519_key
+
+# Authentication
+PermitRootLogin {{ security.ssh_permit_root_login }}
+PubkeyAuthentication yes
+PasswordAuthentication {{ 'yes' if security.ssh_password_auth else 'no' }}
+ChallengeResponseAuthentication no
+
+# Hardening
+X11Forwarding no
+PrintMotd no
+AcceptEnv LANG LC_*
+Subsystem sftp /usr/lib/openssh/sftp-server

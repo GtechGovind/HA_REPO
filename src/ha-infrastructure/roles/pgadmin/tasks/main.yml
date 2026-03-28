@@ -1,0 +1,38 @@
+# ==============================================================================
+# pgAdmin4 Configuration Role
+# ==============================================================================
+# Description: Installs and configures pgAdmin4 as a web-based management 
+#              interface for the PostgreSQL cluster.
+# ==============================================================================
+
+- name: Add pgAdmin repository key
+  shell: curl -fsSL https://www.pgadmin.org/static/packages_pgadmin_org.pub | gpg --dearmor -o /usr/share/keyrings/pgadmin-archive-keyring.gpg
+  args:
+    creates: /usr/share/keyrings/pgadmin-archive-keyring.gpg
+
+- name: Add pgAdmin repository
+  apt_repository:
+    repo: "deb [signed-by=/usr/share/keyrings/pgadmin-archive-keyring.gpg] https://ftp.postgresql.org/pub/pgadmin/pgadmin4/apt/{{ ansible_distribution_release }} pgadmin4 main"
+    state: present
+
+- name: Install pgAdmin4 and dependencies
+  apt:
+    name:
+      - pgadmin4-web
+      - python3-pexpect
+    state: present
+
+- name: Configure pgAdmin4 (Web mode)
+  expect:
+    command: /usr/pgadmin4/bin/setup-web.sh --email {{ pgadmin_email | default('admin@example.com') }} --password {{ vault_pgadmin_password | default('admin') }}
+    responses:
+      (?i)Do you wish to configure the Apache web server\?: "y"
+  register: pgadmin_setup
+  changed_when: "'The configuration is complete' in pgadmin_setup.stdout"
+  ignore_errors: yes
+
+- name: Ensure Apache is enabled and started (for pgAdmin4)
+  systemd:
+    name: apache2
+    enabled: yes
+    state: started

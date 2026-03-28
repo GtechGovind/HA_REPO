@@ -1,0 +1,42 @@
+- name: Configure repmgr
+  template:
+    src: repmgr.conf.j2
+    dest: /etc/postgresql/{{ postgresql.version }}/main/repmgr.conf
+  notify: restart postgresql
+
+- name: Create repmgr user and database
+  become_user: postgres
+  postgresql_user:
+    name: repmgr
+    password: "{{ vault_repmgr_password }}"
+    role_attr_flags: SUPERUSER,LOGIN
+  when: postgresql_role == 'primary'
+
+- name: Create repmgr database
+  become_user: postgres
+  postgresql_db:
+    name: repmgr
+    owner: repmgr
+  when: postgresql_role == 'primary'
+
+- name: Register primary node
+  command: repmgr -f /etc/postgresql/{{ postgresql.version }}/main/repmgr.conf primary register
+  become_user: postgres
+  when: postgresql_role == 'primary'
+  ignore_errors: yes
+
+- name: Clone standby from primary
+  command: |
+    repmgr -h {{ groups['db_nodes'][0] }} \
+    -U repmgr \
+    -d repmgr \
+    -f /etc/postgresql/{{ postgresql.version }}/main/repmgr.conf \
+    standby clone
+  become_user: postgres
+  when: postgresql_role == 'standby'
+  ignore_errors: yes
+
+- name: Register standby node
+  command: repmgr -f /etc/postgresql/{{ postgresql.version }}/main/repmgr.conf standby register
+  become_user: postgres
+  when: postgresql_role == 'standby'

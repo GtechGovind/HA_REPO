@@ -1,0 +1,65 @@
+vts_status_zone;
+vts_status_filter_by_host on;
+
+{% for port in nginx.http_ports %}
+    upstream app_backend_{{ port }} {
+    zone backend_{{ port }} 64k;
+
+    {% for host in groups['app_nodes'] %}
+        {% set hostvars_data = hostvars[host] %}
+        server {{ hostvars_data.ansible_host }}:{{ port }} max_fails=3 fail_timeout=30s;
+    {% endfor %}
+    }
+
+    server {
+    listen {{ port }};
+    server_name _;
+
+    location / {
+    proxy_pass http://app_backend_{{ port }};
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+
+    # Health check configuration
+    health_check interval={{ nginx.health_check_interval }}
+    fails={{ nginx.health_check_fails }}
+    passes={{ nginx.health_check_passes }}
+    uri={{ nginx.health_check_path }};
+    }
+
+    # Health check endpoint for load balancer itself
+    location /nginx-health {
+    access_log off;
+    return 200 "healthy\n";
+    add_header Content-Type text/plain;
+    }
+    }
+{% endfor %}
+
+# Stub status for monitoring
+server {
+listen 8080;
+server_name _;
+
+location /nginx_status {
+    stub_status on;
+    access_log off;
+    allow 127.0.0.1;
+    {% for host in groups['monitoring'] %}
+    allow {{ hostvars[host].ansible_host }};
+    {% endfor %}
+    deny all;
+}
+
+location /status {
+    vts_status on;
+    vts_status_format html;
+    allow 127.0.0.1;
+    {% for host in groups['monitoring'] %}
+    allow {{ hostvars[host].ansible_host }};
+    {% endfor %}
+    deny all;
+}
+}

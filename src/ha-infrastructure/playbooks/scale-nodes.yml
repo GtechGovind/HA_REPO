@@ -1,0 +1,56 @@
+---
+- name: Scale Infrastructure - Add New Nodes
+  hosts: new_app_nodes,new_db_nodes
+  gather_facts: yes
+  become: yes
+  vars:
+    new_node_type: "{{ 'app' if inventory_hostname in groups['new_app_nodes'] else 'db' }}"
+
+  tasks:
+    - name: Run common role for all new nodes
+      import_role:
+        name: common
+      tags: [common]
+
+    - name: Configure new application node
+      block:
+        - import_role:
+            name: nginx_lb
+        - import_role:
+            name: lsyncd
+        - import_role:
+            name: pgbouncer
+        - import_role:
+            name: monitoring/client
+      when: new_node_type == 'app'
+
+    - name: Configure new database node
+      block:
+        - import_role:
+            name: postgresql/common
+        - import_role:
+            name: postgresql/standby
+        - import_role:
+            name: postgresql/repmgr
+        - import_role:
+            name: keepalived
+        - import_role:
+            name: monitoring/client
+      when: new_node_type == 'db'
+
+    - name: Update load balancer configuration
+      hosts: app_nodes
+      tasks:
+        - name: Reload NGINX to include new upstream
+          systemd:
+            name: nginx
+            state: reloaded
+      when: new_node_type == 'app'
+
+    - name: Update repmgr configuration
+      hosts: db_nodes[0]
+      tasks:
+        - name: Register new standby in repmgr
+          command: repmgr -f /etc/postgresql/{{ postgresql.version }}/main/repmgr.conf standby register
+          become_user: postgres
+      when: new_node_type == 'db'

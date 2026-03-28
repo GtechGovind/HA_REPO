@@ -1,0 +1,25 @@
+# ==============================================================================
+# Monitoring Client Role
+# ==============================================================================
+# Description: Installs and configures monitoring agents and logging collectors
+#              on client (application/database) nodes.
+#              - Installs Promtail for log collection.
+#              - Configures log targets for Loki.
+# ==============================================================================
+
+- name: Install Promtail
+  apt:
+    name: promtail
+    state: present
+
+- name: Configure Promtail
+  template:
+    src: promtail.yml.j2
+    dest: /etc/promtail/config.yml
+  notify: restart promtail
+
+- name: Ensure Promtail is started and enabled
+  systemd:
+    name: promtail
+    enabled: yes
+    state: started

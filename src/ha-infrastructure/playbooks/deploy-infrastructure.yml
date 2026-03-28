@@ -1,0 +1,54 @@
+---
+- name: Deploy HA Infrastructure Platform
+  hosts: all
+  gather_facts: yes
+  become: yes
+  roles:
+    - role: common
+      tags: [common, base]
+
+- name: Configure Application Layer
+  hosts: app_nodes
+  become: yes
+  roles:
+    - role: keepalived
+      tags: [keepalived, app]
+    - role: nginx_lb
+      tags: [nginx, app]
+    - role: lsyncd
+      tags: [lsyncd, app]
+    - role: pgbouncer
+      tags: [pgbouncer, app]
+    - role: monitoring/client
+      tags: [monitoring, app]
+
+- name: Configure Database Layer
+  hosts: db_nodes
+  become: yes
+  roles:
+    - role: postgresql/common
+      tags: [postgresql, db]
+    - role: postgresql/{{ postgresql_role }}
+      tags: [postgresql, db]
+    - role: postgresql/repmgr
+      tags: [postgresql, repmgr, db]
+    - role: keepalived
+      tags: [keepalived, db]
+    - role: monitoring/client
+      tags: [monitoring, db]
+
+- name: Configure Witness Node
+  hosts: witness
+  become: yes
+  roles:
+    - role: postgresql/witness
+      tags: [postgresql, witness]
+
+- name: Configure Monitoring Infrastructure
+  hosts: monitoring
+  become: yes
+  roles:
+    - role: monitoring/server
+      tags: [monitoring]
+    - role: pgadmin
+      tags: [pgadmin]

@@ -1,0 +1,15 @@
+[paths]
+data = /var/lib/grafana
+logs = /var/log/grafana
+plugins = /var/lib/grafana/plugins
+
+[server]
+http_addr = 0.0.0.0
+http_port = {{ monitoring.grafana_port }}
+
+[security]
+admin_user = admin
+admin_password = {{ monitoring.grafana_admin_password }}
+
+[auth.anonymous]
+enabled = false

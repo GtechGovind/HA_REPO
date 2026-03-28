@@ -1,0 +1,16 @@
+[Unit]
+Description=PostgreSQL Auto-Rebuild Service
+After=network.target postgresql.service
+Wants=postgresql.service
+
+[Service]
+Type=oneshot
+ExecStart=/opt/ha-infrastructure/scripts/db-auto-rebuild.sh
+User=root
+Group=root
+StandardOutput=journal
+StandardError=journal
+TimeoutStartSec=300
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,11 @@
+# Initial deployment
+ansible-playbook -i inventory/production/hosts.yml playbooks/deploy-infrastructure.yml
+
+# Scale infrastructure
+ansible-playbook -i inventory/production/hosts.yml playbooks/scale-nodes.yml --limit new_app_nodes,new_db_nodes
+
+# Health check
+ansible-playbook -i inventory/production/hosts.yml playbooks/health-check.yml
+
+# Update configuration
+ansible-playbook -i inventory/production/hosts.yml playbooks/deploy-infrastructure.yml --tags "nginx,postgresql"

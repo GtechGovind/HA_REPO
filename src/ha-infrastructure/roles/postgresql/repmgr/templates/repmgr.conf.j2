@@ -1,0 +1,16 @@
+# ==============================================================================
+# Repmgr Configuration Template
+# ==============================================================================
+node_id={{ postgresql_id }}
+node_name='{{ inventory_hostname }}'
+conninfo='host={{ ansible_host }} user=repmgr dbname=repmgr connect_timeout=2'
+data_directory='{{ postgresql.data_dir }}'
+
+# Failover settings
+failover=automatic
+promote_command='repmgr standby promote -f /etc/postgresql/{{ postgresql.version }}/main/repmgr.conf --log-to-file'
+follow_command='repmgr standby follow -f /etc/postgresql/{{ postgresql.version }}/main/repmgr.conf --log-to-file --upstream-node-id=%n'
+
+# Monitoring
+monitoring_history=yes
+monitor_interval_secs=2

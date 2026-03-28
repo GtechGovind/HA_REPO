@@ -1,0 +1,71 @@
+# ==============================================================================
+# Monitoring Server Configuration Role (Prometheus/Grafana)
+# ==============================================================================
+# Description: Installs and configures the central monitoring server.
+#              - Installs Prometheus for metrics storage.
+#              - Installs Grafana for visualization.
+#              - Configures alertmanager for notifications.
+# ==============================================================================
+
+- name: Install monitoring stack packages
+  apt:
+    name:
+      - prometheus
+      - prometheus-alertmanager
+      - grafana
+    state: present
+
+- name: Configure Prometheus
+  template:
+    src: prometheus.yml.j2
+    dest: /etc/prometheus/prometheus.yml
+  notify: restart prometheus
+
+- name: Configure Grafana
+  template:
+    src: grafana.ini.j2
+    dest: /etc/grafana/grafana.ini
+  notify: restart grafana
+
+- name: Create Grafana provisioning directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: root
+    group: grafana
+    mode: '0750'
+  loop:
+    - /etc/grafana/provisioning/datasources
+    - /etc/grafana/provisioning/dashboards
+    - /var/lib/grafana/dashboards
+
+- name: Configure Grafana datasources
+  template:
+    src: provisioning/datasources/prometheus.yml.j2
+    dest: /etc/grafana/provisioning/datasources/prometheus.yml
+  notify: restart grafana
+
+- name: Configure Grafana dashboard providers
+  template:
+    src: provisioning/dashboards/dashboards-provider.yml.j2
+    dest: /etc/grafana/provisioning/dashboards/dashboards-provider.yml
+  notify: restart grafana
+
+- name: Deploy preconfigured dashboards
+  copy:
+    src: dashboards/
+    dest: /var/lib/grafana/dashboards/
+    owner: root
+    group: grafana
+    mode: '0640'
+  notify: restart grafana
+
+- name: Ensure monitoring services are started and enabled
+  systemd:
+    name: "{{ item }}"
+    enabled: yes
+    state: started
+  loop:
+    - prometheus
+    - prometheus-alertmanager
+    - grafana-server

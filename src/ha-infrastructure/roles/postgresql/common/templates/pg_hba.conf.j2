@@ -1,0 +1,21 @@
+# ==============================================================================
+# PostgreSQL Host-Based Authentication (pg_hba.conf)
+# ==============================================================================
+
+# TYPE  DATABASE        USER            ADDRESS                 METHOD
+
+# "local" is for Unix domain socket connections only
+local   all             postgres                                peer
+
+# IPv4 local connections:
+host    all             all             127.0.0.1/32            md5
+
+{% for subnet in network.trusted_subnets %}
+# Access for subnet: {{ subnet }}
+host    replication     {{ postgresql.replication_user }}       {{ subnet }}            md5
+host    repmgr          repmgr          {{ subnet }}            md5
+host    all             all             {{ subnet }}            md5
+{% endfor %}
+
+# IPv6 local connections:
+host    all             all             ::1/128                 md5

@@ -1,0 +1,10 @@
+---
+roles:
+  - name: geerlingguy.postgresql
+    version: 3.4.0
+  - name: geerlingguy.nginx
+    version: 3.1.1
+  - name: geerlingguy.prometheus
+    version: 1.8.0
+  - name: cloudalchemy.grafana
+    version: 0.14.3

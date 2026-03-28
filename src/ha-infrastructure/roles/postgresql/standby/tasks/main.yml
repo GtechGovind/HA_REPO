@@ -1,0 +1,51 @@
+# ==============================================================================
+# PostgreSQL Standby Role Configuration
+# ==============================================================================
+# Description: Specific tasks for configuring standby nodes in the PG cluster.
+#              - Ensures standby nodes are correctly configured and started.
+#              - Manages standby-specific system settings.
+# ==============================================================================
+
+- name: Ensure PostgreSQL service is started and enabled on standby
+  systemd:
+    name: postgresql
+    enabled: yes
+    state: started
+  when: postgresql_role == 'standby'
+
+- name: Copy auto-rebuild script
+  copy:
+    src: ../../../scripts/db-auto-rebuild.sh
+    dest: /opt/ha-infrastructure/scripts/db-auto-rebuild.sh
+    mode: '0755'
+    owner: root
+    group: root
+  when: postgresql_role == 'standby'
+
+- name: Configure auto-rebuild service
+  template:
+    src: db-auto-rebuild.service.j2
+    dest: /etc/systemd/system/db-auto-rebuild.service
+  notify: reload systemd
+  when: postgresql_role == 'standby'
+
+- name: Configure auto-rebuild timer
+  template:
+    src: db-auto-rebuild.timer.j2
+    dest: /etc/systemd/system/db-auto-rebuild.timer
+  notify: reload systemd
+  when: postgresql_role == 'standby'
+
+- name: Ensure auto-rebuild timer is enabled and started
+  systemd:
+    name: db-auto-rebuild.timer
+    enabled: yes
+    state: started
+  when: postgresql_role == 'standby'
+
+- name: Verify standby health
+  become_user: postgres
+  command: pg_isready
+  register: pg_ready
+  changed_when: false
+  when: postgresql_role == 'standby'

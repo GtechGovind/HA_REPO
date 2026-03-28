@@ -1,0 +1,26 @@
+-- ==============================================================================
+-- Lsyncd Configuration Template
+-- ==============================================================================
+settings {
+    logfile = "/var/log/lsyncd/lsyncd.log",
+    statusFile = "/var/log/lsyncd/lsyncd.status",
+    statusInterval = 20,
+    nodaemon = false
+}
+
+{% for dir in sync_dirs | default([]) %}
+sync {
+    default.rsync,
+    source = "{{ dir }}",
+    {% for host in groups['app_nodes'] %}
+    {% if host != inventory_hostname %}
+    target = "{{ hostvars[host].ansible_host }}:{{ dir }}",
+    {% endif %}
+    {% endfor %}
+    rsync = {
+        archive = true,
+        compress = true,
+        _extra = {"--bwlimit=2000"}
+    }
+}
+{% endfor %}

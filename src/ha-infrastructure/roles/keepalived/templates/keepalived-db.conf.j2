@@ -1,0 +1,38 @@
+global_defs {
+    enable_script_security
+    script_user root
+    router_id LVS_DB_{{ inventory_hostname }}
+}
+
+vrrp_script chk_postgres {
+    script "/etc/keepalived/health-check.sh postgres"
+    interval 2
+    weight -20
+    fall 2
+    rise 1
+}
+
+vrrp_instance VI_DB {
+    interface eth0
+    state {{ 'MASTER' if postgresql_role == 'primary' else 'BACKUP' }}
+    virtual_router_id {{ network.vrrp_vid + 1 }}
+    priority {{ network.vrrp_priority_primary if postgresql_role == 'primary' else network.vrrp_priority_standby }}
+    advert_int 1
+
+    authentication {
+        auth_type PASS
+        auth_pass {{ vault_keepalived_password }}
+    }
+
+    virtual_ipaddress {
+        {{ network.db_vip }}/24 dev eth0 label eth0:db_vip
+    }
+
+    track_script {
+        chk_postgres
+    }
+
+    notify_master "/etc/keepalived/notify.sh master"
+    notify_backup "/etc/keepalived/notify.sh backup"
+    notify_fault "/etc/keepalived/notify.sh fault"
+}

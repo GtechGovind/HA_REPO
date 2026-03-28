@@ -1,0 +1,40 @@
+---
+- name: Validate HA Infrastructure Health
+  hosts: all
+  gather_facts: yes
+
+  tasks:
+    - name: Check NGINX load balancer
+      uri:
+        url: "http://{{ network.app_vip }}:8080/nginx-health"
+        status_code: 200
+      run_once: yes
+      delegate_to: localhost
+
+    - name: Check PostgreSQL replication
+      postgresql_query:
+        db: postgres
+        query: "SELECT * FROM pg_stat_replication;"
+      become_user: postgres
+      register: replication_status
+      when: inventory_hostname == groups['db_nodes'][0]
+
+    - name: Verify PgBouncer connections
+      command: psql -h localhost -p 6432 -U pgbouncer pgbouncer -c "SHOW STATS;"
+      become_user: postgres
+      when: inventory_hostname in groups['app_nodes']
+
+    - name: Check Keepalived VIP
+      command: ip addr show eth0
+      register: ip_output
+
+    - name: Validate monitoring endpoints
+      uri:
+        url: "http://{{ ansible_host }}:{{ item.port }}/metrics"
+        status_code: 200
+      loop:
+        - { port: 9100, name: node_exporter }
+        - { port: 9187, name: postgres_exporter }
+        - { port: 9113, name: nginx_exporter }
+        - { port: 9127, name: pgbouncer_exporter }
+      when: inventory_hostname in groups['monitoring']

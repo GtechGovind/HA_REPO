@@ -1,0 +1,31 @@
+# ==============================================================================
+# PostgreSQL Witness Role Configuration
+# ==============================================================================
+# Description: Configures a witness node for the PostgreSQL cluster.
+#              A witness node is used by repmgr to provide a tie-breaker in 
+#              failover situations where a majority cannot be reached.
+# ==============================================================================
+
+- name: Install PostgreSQL and repmgr on witness
+  apt:
+    name:
+      - postgresql-{{ postgresql.version }}
+      - postgresql-{{ postgresql.version }}-repmgr
+    state: present
+
+- name: Create repmgr configuration for witness
+  template:
+    src: ../../repmgr/templates/repmgr.conf.j2
+    dest: /etc/postgresql/{{ postgresql.version }}/main/repmgr.conf
+  notify: restart postgresql
+
+- name: Register witness node
+  command: repmgr -f /etc/postgresql/{{ postgresql.version }}/main/repmgr.conf witness register
+  become_user: postgres
+  ignore_errors: yes
+
+- name: Ensure PostgreSQL service is started and enabled
+  systemd:
+    name: postgresql
+    enabled: yes
+    state: started

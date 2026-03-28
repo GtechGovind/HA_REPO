@@ -1,0 +1,24 @@
+#!/bin/bash
+# Keepalived Health Check Script
+
+SERVICE=$1
+
+case $SERVICE in
+    nginx)
+        systemctl is-active --quiet nginx
+        exit $?
+        ;;
+    postgres)
+        pg_isready -h localhost -p {{ postgresql.port }} -U postgres
+        exit $?
+        ;;
+    app)
+        # Check local application health
+        curl -sf http://localhost:{{ nginx.http_ports[0] }}/health > /dev/null
+        exit $?
+        ;;
+    *)
+        echo "Usage: $0 {nginx|postgres|app}"
+        exit 1
+        ;;
+esac

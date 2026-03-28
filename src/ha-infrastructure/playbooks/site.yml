@@ -1,0 +1,36 @@
+# ==============================================================================
+# Main Infrastructure Deployment Playbook
+# ==============================================================================
+# Description: Orchestrates the full setup of the HA infrastructure.
+#              1. Common setup (packages, users, networking, security)
+#              2. Load Balancing Layer (Nginx, Keepalived)
+#              3. Database Layer (PostgreSQL with repmgr, PgBouncer)
+#              4. Monitoring Layer (Prometheus, Grafana, Exporters)
+# ==============================================================================
+
+- name: Deploy Infrastructure
+  hosts: all
+  roles:
+    - common
+
+- name: Setup Keepalived and Nginx
+  hosts: app_nodes
+  roles:
+    - keepalived
+    - nginx_lb
+
+- name: Setup PostgreSQL Cluster
+  hosts: db_nodes
+  roles:
+    - postgresql/common
+    - postgresql/primary
+    - postgresql/standby
+    - postgresql/repmgr
+    - pgbouncer
+
+- name: Setup Monitoring
+  hosts: monitoring
+  roles:
+    - monitoring/server
+    - monitoring/client
+    - monitoring/exporters

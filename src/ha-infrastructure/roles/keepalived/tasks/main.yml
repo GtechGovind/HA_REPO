@@ -1,0 +1,46 @@
+# ==============================================================================
+# Keepalived High Availability Role
+# ==============================================================================
+# Description: Configures VRRP (Virtual Router Redundancy Protocol) for
+#              high availability of application and database entry points.
+#              - Manages Virtual IP (VIP) addresses.
+#              - Performs failover between nodes based on priority and health.
+# ==============================================================================
+
+- name: Install keepalived
+  apt:
+    name: keepalived
+    state: present
+
+- name: Configure keepalived for application VIP
+  template:
+    src: keepalived-app.conf.j2
+    dest: /etc/keepalived/keepalived-app.conf
+  notify: restart keepalived
+
+- name: Configure keepalived for database VIP
+  template:
+    src: keepalived-db.conf.j2
+    dest: /etc/keepalived/keepalived-db.conf
+  notify: restart keepalived
+  when: inventory_hostname in groups['db_nodes']
+
+- name: Create health check script
+  template:
+    src: health-check.sh.j2
+    dest: /etc/keepalived/health-check.sh
+    mode: '0755'
+  notify: restart keepalived
+
+- name: Create notify script
+  copy:
+    src: ../../../scripts/failover-notify.sh
+    dest: /etc/keepalived/notify.sh
+    mode: '0755'
+  notify: restart keepalived
+
+- name: Enable and start keepalived
+  systemd:
+    name: keepalived
+    enabled: yes
+    state: started

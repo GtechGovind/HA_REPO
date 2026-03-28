@@ -1,0 +1,73 @@
+# ==============================================================================
+# PostgreSQL Base Configuration Role
+# ==============================================================================
+# Description: Installs and prepares PostgreSQL on all database cluster nodes.
+#              - Adds the official PostgreSQL repository and GPG key.
+#              - Installs core packages, repmgr for failover, and utilities.
+#              - Configures fundamental directories and system-level settings.
+#              - Initializes the database on the primary node.
+# ==============================================================================
+
+- name: Add PostgreSQL repository key (using gpg)
+  shell: curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor -o /usr/share/keyrings/postgresql.gpg
+  args:
+    creates: /usr/share/keyrings/postgresql.gpg
+
+- name: Add PostgreSQL official repository
+  apt_repository:
+    repo: "deb [signed-by=/usr/share/keyrings/postgresql.gpg] http://apt.postgresql.org/pub/repos/apt {{ ansible_distribution_release }}-pgdg main"
+    state: present
+
+- name: Install PostgreSQL packages
+  apt:
+    name:
+      - postgresql-{{ postgresql.version }}
+      - postgresql-contrib-{{ postgresql.version }}
+      - postgresql-{{ postgresql.version }}-repmgr
+      - postgresql-{{ postgresql.version }}-pgbackrest
+      - postgresql-{{ postgresql.version }}-wal2json
+    state: present
+
+- name: Create PostgreSQL directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: postgres
+    group: postgres
+    mode: '0750'
+  loop:
+    - "{{ postgresql.data_dir }}"
+    - "{{ postgresql.wal_dir }}"
+    - /var/log/postgresql
+    - /etc/postgresql/{{ postgresql.version }}/main/conf.d
+
+- name: Configure PostgreSQL
+  template:
+    src: postgresql.conf.j2
+    dest: /etc/postgresql/{{ postgresql.version }}/main/postgresql.conf
+  notify: restart postgresql
+
+- name: Configure pg_hba.conf
+  template:
+    src: pg_hba.conf.j2
+    dest: /etc/postgresql/{{ postgresql.version }}/main/pg_hba.conf
+  notify: restart postgresql
+
+- name: Create replication user
+  become_user: postgres
+  postgresql_user:
+    name: "{{ postgresql.replication_user }}"
+    password: "{{ vault_replication_password }}"
+    role_attr_flags: REPLICATION,LOGIN
+    state: present
+  when: postgresql_role == 'primary'
+
+- name: Initialize PostgreSQL data directory
+  command: |
+    pg_createcluster {{ postgresql.version }} main \
+    --start-conf=auto \
+    --pgdata={{ postgresql.data_dir }} \
+    --waldir={{ postgresql.wal_dir }}
+  args:
+    creates: "{{ postgresql.data_dir }}/PG_VERSION"
+  when: postgresql_role == 'primary'

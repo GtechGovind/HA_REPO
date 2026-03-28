@@ -1,0 +1,105 @@
+# ==============================================================================
+# Global Infrastructure Variables
+# ==============================================================================
+# Description: This file defines all global configuration variables for the HA
+#              infrastructure, including ports, versions, and network settings.
+# ==============================================================================
+
+# General Settings
+environment: production
+timezone: UTC
+ntp_servers:
+  - 0.pool.ntp.org
+  - 1.pool.ntp.org
+
+# Network settings for HA (VIPs)
+network:
+  vrrp_vid: 50
+  vrrp_priority_primary: 150
+  vrrp_priority_standby: 100
+  app_vip: 10.100.100.12
+  db_vip: 10.100.100.22
+  trusted_subnets:
+    - 127.0.0.1/32
+    - 10.0.0.0/8
+
+# PostgreSQL Tuning and Replication (PG 17)
+postgresql:
+  version: 17
+  data_dir: /var/lib/postgresql/17/main
+  wal_dir: /var/lib/postgresql/17/wal
+  port: 5432
+  max_connections: 500
+  shared_buffers: "{{ (ansible_memtotal_mb * 0.25) | int if ansible_memtotal_mb is defined else 256 }}MB"
+  effective_cache_size: "{{ (ansible_memtotal_mb * 0.75) | int if ansible_memtotal_mb is defined else 768 }}MB"
+  replication_user: replicator
+  replication_slots: 5
+  wal_keep_size: 10GB
+  archive_mode: on
+  archive_command: "rsync -a %p atek@backup-server:/backups/wal/%f"
+
+# PgBouncer Connection Pooling
+pgbouncer:
+  port: 6432
+  pool_mode: transaction
+  max_client_conn: 1000
+  default_pool_size: 20
+  reserve_pool_size: 5
+  auth_type: md5
+
+# Nginx Load Balancing settings
+nginx:
+  http_ports:
+    - 8080
+    - 8081
+    - 8443
+  health_check_path: /health
+  health_check_interval: 10s
+  health_check_fails: 3
+  health_check_passes: 2
+
+# File Synchronization (Lsyncd)
+lsyncd:
+  sync_interval: 1
+  max_processes: 8
+  ssh_port: 22
+
+# Monitoring (Prometheus/Grafana)
+monitoring:
+  prometheus_port: 9090
+  prometheus_retention: 30d
+  grafana_port: 3000
+  grafana_admin_password: "{{ vault_grafana_password | default('admin') }}"
+  alertmanager_port: 9093
+  alertmanager_receivers:
+    - email: "support@atekpayments.com"
+  node_exporter_port: 9100
+  postgres_exporter_port: 9187
+  nginx_vts_exporter_port: 9113
+  promtail_port: 9080
+  loki_port: 3100
+  pgbouncer_exporter_port: 9127
+
+# Security and Hardening
+security:
+  ssh_port: 22
+  ssh_password_auth: false
+  ssh_permit_root_login: "no"
+  firewall_enabled: true
+  allowed_ports:
+    - { port: '22', proto: tcp, comment: 'SSH' }
+    - { port: '80', proto: tcp, comment: 'HTTP' }
+    - { port: '443', proto: tcp, comment: 'HTTPS' }
+    - { port: '{{ postgresql.port }}', proto: tcp, comment: 'PostgreSQL' }
+    - { port: '{{ pgbouncer.port }}', proto: tcp, comment: 'PgBouncer' }
+    - { port: '{{ monitoring.prometheus_port }}', proto: tcp, comment: 'Prometheus' }
+    - { port: '{{ monitoring.grafana_port }}', proto: tcp, comment: 'Grafana' }
+    - { port: '{{ monitoring.alertmanager_port }}', proto: tcp, comment: 'Alertmanager' }
+    - { port: '{{ monitoring.node_exporter_port }}', proto: tcp, comment: 'Node Exporter' }
+    - { port: '{{ monitoring.postgres_exporter_port }}', proto: tcp, comment: 'PostgreSQL Exporter' }
+    - { port: '{{ monitoring.nginx_vts_exporter_port }}', proto: tcp, comment: 'Nginx VTS Exporter' }
+    - { port: '{{ monitoring.pgbouncer_exporter_port }}', proto: tcp, comment: 'PgBouncer Exporter' }
+    - { port: '{{ monitoring.promtail_port }}', proto: tcp, comment: 'Promtail' }
+    - { port: '8000', proto: tcp, comment: 'Health Check Endpoint' }
+  fail2ban_enabled: true
+  auditd_enabled: true

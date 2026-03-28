@@ -1,0 +1,40 @@
+# ==============================================================================
+# Lsyncd Directory Synchronization Role
+# ==============================================================================
+# Description: Synchronizes directories across application nodes for consistency.
+#              - Uses Lsyncd (Live Syncing Daemon) based on rsync and inotify.
+#              - Manages SSH key-based authentication for secure transfers.
+#              - Ensures defined directories are consistent across the cluster.
+# ==============================================================================
+
+- name: Install lsyncd
+  apt:
+    name: lsyncd
+    state: present
+
+- name: Configure SSH key-based authentication for sync
+  authorized_key:
+    user: "{{ ansible_user }}"
+    key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
+    state: present
+
+- name: Create lsyncd configuration
+  template:
+    src: lsyncd.conf.lua.j2
+    dest: /etc/lsyncd/lsyncd.conf.lua
+  notify: restart lsyncd
+
+- name: Create sync directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: '0755'
+  loop: "{{ sync_dirs | default([]) }}"
+
+- name: Enable and start lsyncd
+  systemd:
+    name: lsyncd
+    enabled: yes
+    state: started

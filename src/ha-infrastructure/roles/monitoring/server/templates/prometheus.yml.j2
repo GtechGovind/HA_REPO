@@ -1,0 +1,29 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:{{ monitoring.prometheus_port }}']
+
+  - job_name: 'node-exporters'
+    static_configs:
+      - targets:
+{% for host in groups['all'] %}
+        - '{{ hostvars[host].ansible_host }}:{{ monitoring.node_exporter_port }}'
+{% endfor %}
+
+  - job_name: 'postgres-exporters'
+    static_configs:
+      - targets:
+{% for host in groups['db_nodes'] %}
+        - '{{ hostvars[host].ansible_host }}:{{ monitoring.postgres_exporter_port }}'
+{% endfor %}
+
+  - job_name: 'nginx-exporters'
+    static_configs:
+      - targets:
+{% for host in groups['app_nodes'] %}
+        - '{{ hostvars[host].ansible_host }}:{{ monitoring.nginx_vts_exporter_port }}'
+{% endfor %}

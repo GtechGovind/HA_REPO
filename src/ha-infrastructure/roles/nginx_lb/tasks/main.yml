@@ -1,0 +1,40 @@
+# ==============================================================================
+# Nginx Load Balancer Configuration Role
+# ==============================================================================
+# Description: Configures Nginx as a reverse proxy and load balancer.
+#              - Distributes traffic to application backends.
+#              - Handles SSL/TLS termination.
+#              - Integrates with Keepalived for high availability.
+# ==============================================================================
+
+- name: Install Nginx
+  apt:
+    name:
+      - nginx
+      - libnginx-mod-http-vts
+    state: present
+
+- name: Configure Nginx load balancer
+  template:
+    src: nginx-lb.conf.j2
+    dest: /etc/nginx/sites-available/ha-lb.conf
+  notify: reload nginx
+
+- name: Enable Nginx load balancer site
+  file:
+    src: /etc/nginx/sites-available/ha-lb.conf
+    dest: /etc/nginx/sites-enabled/ha-lb.conf
+    state: link
+  notify: reload nginx
+
+- name: Remove default nginx configuration
+  file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+  notify: reload nginx
+
+- name: Ensure Nginx is started and enabled
+  systemd:
+    name: nginx
+    enabled: yes
+    state: started

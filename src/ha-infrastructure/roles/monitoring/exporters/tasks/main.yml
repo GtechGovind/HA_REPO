@@ -1,0 +1,43 @@
+# ==============================================================================
+# Monitoring Exporters Role
+# ==============================================================================
+# Description: Installs and configures Prometheus exporters on target nodes.
+#              - Node Exporter for system metrics.
+#              - PostgreSQL Exporter for database metrics.
+#              - Nginx VTS Exporter for load balancer metrics.
+# ==============================================================================
+
+- name: Install node-exporter
+  apt:
+    name: prometheus-node-exporter
+    state: present
+
+- name: Install postgres-exporter
+  apt:
+    name: prometheus-postgres-exporter
+    state: present
+  when: "'db_nodes' in group_names"
+
+- name: Configure postgres-exporter
+  template:
+    src: postgres_exporter.env.j2
+    dest: /etc/default/prometheus-postgres-exporter
+  notify: restart postgres-exporter
+  when: "'db_nodes' in group_names"
+
+- name: Install nginx-vts-exporter
+  apt:
+    name: prometheus-nginx-vts-exporter
+    state: present
+  when: "'app_nodes' in group_names"
+
+- name: Ensure exporters are started and enabled
+  systemd:
+    name: "{{ item.name }}"
+    enabled: yes
+    state: started
+  loop:
+    - { name: 'prometheus-node-exporter', when: true }
+    - { name: 'prometheus-postgres-exporter', when: "'db_nodes' in group_names" }
+    - { name: 'prometheus-nginx-vts-exporter', when: "'app_nodes' in group_names" }
+  when: item.when
