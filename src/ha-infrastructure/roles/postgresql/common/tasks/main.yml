@@ -128,7 +128,6 @@
   loop:
     - "/etc/postgresql/{{ postgresql.version }}/main"
     - "/etc/postgresql/{{ postgresql.version }}/main/conf.d"
-  when: postgresql_role == 'primary'
 
 - name: Debug PostgreSQL data directory initialization
   debug:
