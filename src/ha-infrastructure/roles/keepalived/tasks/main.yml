@@ -91,6 +91,14 @@
   register: vip_check
   changed_when: false
 
+- name: Get Keepalived logs if VIP not assigned
+  command: tail -n 50 /var/log/keepalived.log
+  register: keepalived_logs
+  changed_when: false
+  when: vip_check.stdout == ""
+
 - name: Show VIP assignment status
   debug:
-    msg: "Assigned VIPs on {{ inventory_hostname }}: {{ vip_check.stdout_lines }}"
+    msg: 
+      - "Assigned VIPs on {{ inventory_hostname }}: {{ vip_check.stdout_lines }}"
+      - "Keepalived logs (last 50 lines) if VIP missing: {{ keepalived_logs.stdout_lines | default('VIP assigned or logs unavailable') }}"

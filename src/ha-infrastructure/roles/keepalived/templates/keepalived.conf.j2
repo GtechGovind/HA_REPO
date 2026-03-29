@@ -39,6 +39,9 @@ vrrp_instance VI_APP {
         {{ network.app_vip }}/24 dev {{ ansible_default_ipv4.interface | default('eth0') }} label {{ ansible_default_ipv4.interface | default('eth0') }}:vip
     }
 
+    # Ensure VRRP is not blocked by multicast issues
+    mcast_src_ip {{ ansible_default_ipv4.address }}
+
     track_script {
         chk_nginx
         chk_app_health
@@ -75,6 +78,9 @@ vrrp_instance VI_DB {
     virtual_ipaddress {
         {{ network.db_vip }}/24 dev {{ ansible_default_ipv4.interface | default('eth0') }} label {{ ansible_default_ipv4.interface | default('eth0') }}:db_vip
     }
+
+    # Ensure VRRP is not blocked by multicast issues
+    mcast_src_ip {{ ansible_default_ipv4.address }}
 
     track_script {
         chk_postgres
