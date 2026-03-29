@@ -1,11 +1,29 @@
+http {
+# Include mime types
+include /etc/nginx/mime.types;
+default_type application/octet-stream;
+
+# Basic settings
+sendfile on;
+tcp_nopush on;
+tcp_nodelay on;
+keepalive_timeout 65;
+types_hash_max_size 2048;
+client_max_body_size 100M;
+
+# Logging
+access_log /var/log/nginx/access.log;
+error_log /var/log/nginx/error.log;
+
 {% if vts_module_check is defined and vts_module_check.rc == 0 %}
-vts_status_zone;
-vts_status_filter_by_host on;
+    # VTS module configuration
+    vts_status_zone status_zone;
+    vts_status_filter_by_host on;
 {% endif %}
 
 {% for port in nginx.http_ports %}
     upstream app_backend_{{ port }} {
-    {% for host in groups['app_nodes'] %}
+    {% for host in groups.get('app_nodes', []) %}
         {% set hostvars_data = hostvars[host] %}
         server {{ hostvars_data.ansible_host }}:{{ port }} max_fails=3 fail_timeout=30s;
     {% endfor %}
@@ -21,10 +39,13 @@ vts_status_filter_by_host on;
     proxy_set_header X-Real-IP $remote_addr;
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
     proxy_set_header X-Forwarded-Proto $scheme;
+
+    # Health check for upstream servers
+    proxy_next_upstream error timeout invalid_header http_500 http_502 http_503;
     }
 
-    # Health check endpoint for load balancer itself
-    location /nginx-health {
+    # Health check endpoint for load balancer
+    location /health {
     access_log off;
     return 200 "healthy\n";
     add_header Content-Type text/plain;
@@ -38,26 +59,34 @@ listen 8888;
 server_name _;
 
 location /nginx_status {
-    stub_status on;
-    access_log off;
-    allow 127.0.0.1;
-    {% for host in groups['monitoring'] %}
+stub_status on;
+access_log off;
+allow 127.0.0.1;
+{% for host in groups.get('monitoring', []) %}
     allow {{ hostvars[host].ansible_host }};
-    {% endfor %}
-    deny all;
+{% endfor %}
+deny all;
 }
 
 location /status {
-    {% if vts_module_check is defined and vts_module_check.rc == 0 %}
+{% if vts_module_check is defined and vts_module_check.rc == 0 %}
     vts_status on;
-    vts_status_format html;
-    {% else %}
+    vts_status_format json;
+{% else %}
     stub_status on;
-    {% endif %}
-    allow 127.0.0.1;
-    {% for host in groups['monitoring'] %}
+{% endif %}
+allow 127.0.0.1;
+{% for host in groups.get('monitoring', []) %}
     allow {{ hostvars[host].ansible_host }};
-    {% endfor %}
-    deny all;
+{% endfor %}
+deny all;
+}
+}
+
+# Default server to catch unmatched requests
+server {
+listen 80 default_server;
+server_name _;
+return 404;
 }
 }

@@ -50,7 +50,6 @@
   template:
     src: nginx-lb.conf.j2
     dest: /etc/nginx/sites-available/ha-lb.conf
-    validate: nginx -t -c %s
   notify: reload nginx
 
 - name: Enable Nginx load balancer site
@@ -59,6 +58,10 @@
     dest: /etc/nginx/sites-enabled/ha-lb.conf
     state: link
   notify: reload nginx
+
+- name: Validate Nginx configuration
+  command: nginx -t
+  changed_when: false
 
 - name: Remove default nginx configuration
   file:

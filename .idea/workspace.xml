@@ -4,13 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4e5b88f0-7383-45f3-a30a-4b5b1413df28" name="Changes" comment="Refined Nginx and Prometheus setup: adjusted conditional installation of VTS module and exporter, improved cleanup tasks, and updated exporter scrape endpoint.">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ha-infrastructure/roles/keepalived/tasks/main.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/ha-infrastructure/roles/keepalived/tasks/main.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ha-infrastructure/roles/keepalived/templates/keepalived-app.conf.j2" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ha-infrastructure/roles/keepalived/templates/keepalived-db.conf.j2" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ha-infrastructure/roles/keepalived/templates/keepalived.conf.j2" beforeDir="false" afterPath="$PROJECT_DIR$/src/ha-infrastructure/roles/keepalived/templates/keepalived.conf.j2" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ha-infrastructure/scripts/failover-notify.sh" beforeDir="false" afterPath="$PROJECT_DIR$/src/ha-infrastructure/scripts/failover-notify.sh" afterDir="false" />
+    <list default="true" id="4e5b88f0-7383-45f3-a30a-4b5b1413df28" name="Changes" comment="Refined Nginx load balancer setup: adjusted `failed_when` and `validate` parameters for improved task behavior and configuration validation.">
+      <change beforePath="$PROJECT_DIR$/src/ha-infrastructure/roles/nginx_lb/tasks/main.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/ha-infrastructure/roles/nginx_lb/tasks/main.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ha-infrastructure/roles/nginx_lb/templates/nginx-lb.conf.j2" beforeDir="false" afterPath="$PROJECT_DIR$/src/ha-infrastructure/roles/nginx_lb/templates/nginx-lb.conf.j2" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -38,6 +34,9 @@
   <component name="McpProjectServerCommands">
     <commands />
     <urls />
+  </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 0,
@@ -182,7 +181,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1774703992131</updated>
-      <workItem from="1774703993136" duration="24099000" />
+      <workItem from="1774703993136" duration="24542000" />
     </task>
     <task id="LOCAL-00001" summary="Refactored HA infrastructure requirements and production inventory file for improved clarity, reusability, and scalability">
       <option name="closed" value="true" />
@@ -552,15 +551,29 @@
       <option name="project" value="LOCAL" />
       <updated>1774730551067</updated>
     </task>
-    <option name="localTasksCounter" value="47" />
+    <task id="LOCAL-00047" summary="Removed redundant Keepalived configuration files, introduced centralized logging and improved failover notifications, and refined VIP handling tasks for better clarity and consistency.">
+      <option name="closed" value="true" />
+      <created>1774758818020</created>
+      <option name="number" value="00047" />
+      <option name="presentableId" value="LOCAL-00047" />
+      <option name="project" value="LOCAL" />
+      <updated>1774758818020</updated>
+    </task>
+    <task id="LOCAL-00048" summary="Refined Nginx load balancer setup: adjusted `failed_when` and `validate` parameters for improved task behavior and configuration validation.">
+      <option name="closed" value="true" />
+      <created>1774758997073</created>
+      <option name="number" value="00048" />
+      <option name="presentableId" value="LOCAL-00048" />
+      <option name="project" value="LOCAL" />
+      <updated>1774758997073</updated>
+    </task>
+    <option name="localTasksCounter" value="49" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Removed redundant `when` conditions for improved task clarity and consistency across PostgreSQL roles." />
-    <MESSAGE value="Created PostgreSQL data and WAL directories during primary role setup with strict permissions to ensure proper initialization" />
     <MESSAGE value="Refactored PostgreSQL service management: standardized use of cluster-specific services, added service file fixes, enabled reinstallation tasks, and improved clarity in task conditions." />
     <MESSAGE value="Removed unused PostgreSQL readiness wait task for cleaner and more efficient role execution." />
     <MESSAGE value="Standardized PostgreSQL configuration and runtime setup: added default paths, ensured runtime directory creation, improved diagnostics for primary role, and refined task conditions." />
@@ -584,6 +597,8 @@
     <MESSAGE value="Added pre-firewall SSH allow rule to ensure safe access during firewall enablement." />
     <MESSAGE value="Added conditional installation and configuration for Nginx VTS module and adjusted Prometheus exporter setup accordingly." />
     <MESSAGE value="Refined Nginx and Prometheus setup: adjusted conditional installation of VTS module and exporter, improved cleanup tasks, and updated exporter scrape endpoint." />
-    <option name="LAST_COMMIT_MESSAGE" value="Refined Nginx and Prometheus setup: adjusted conditional installation of VTS module and exporter, improved cleanup tasks, and updated exporter scrape endpoint." />
+    <MESSAGE value="Removed redundant Keepalived configuration files, introduced centralized logging and improved failover notifications, and refined VIP handling tasks for better clarity and consistency." />
+    <MESSAGE value="Refined Nginx load balancer setup: adjusted `failed_when` and `validate` parameters for improved task behavior and configuration validation." />
+    <option name="LAST_COMMIT_MESSAGE" value="Refined Nginx load balancer setup: adjusted `failed_when` and `validate` parameters for improved task behavior and configuration validation." />
   </component>
 </project>
