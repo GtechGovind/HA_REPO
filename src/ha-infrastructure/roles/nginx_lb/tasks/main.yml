@@ -14,12 +14,22 @@
     state: present
   notify: restart nginx
 
-- name: Check if libnginx-mod-http-vts is available
-  command: apt-cache show libnginx-mod-http-vts
+- name: Check if Nginx VTS module is available in repositories
+  shell: >
+    apt-cache show libnginx-mod-http-vts 2>/dev/null | grep -q "Package: libnginx-mod-http-vts"
   register: vts_module_check
   ignore_errors: yes
   changed_when: false
   failed_when: false
+
+- name: Diagnostic - Report VTS module availability
+  debug:
+    msg: >-
+      Nginx VTS module (libnginx-mod-http-vts) is
+      {{ 'AVAILABLE' if vts_module_check.rc == 0 else 'NOT AVAILABLE' }}
+      in the system repositories. Playbook will use
+      {{ 'VTS module' if vts_module_check.rc == 0 else 'default stub_status' }}
+      for metrics collection.
 
 - name: Install Nginx VTS module and exporter if available
   apt:
