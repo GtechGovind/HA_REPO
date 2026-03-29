@@ -5,8 +5,11 @@ SERVICE=$1
 
 case $SERVICE in
     nginx)
-        systemctl is-active --quiet nginx
-        exit $?
+        # Check if Nginx service is active and responding
+        systemctl is-active --quiet nginx || exit 1
+        # Quick check for Nginx master process
+        pgrep -x nginx > /dev/null || exit 1
+        exit 0
         ;;
     postgres)
         # Check if PostgreSQL is ready and if it is the primary (not in recovery)

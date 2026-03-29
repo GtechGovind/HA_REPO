@@ -11,8 +11,8 @@ vrrp_script chk_nginx {
     script "/etc/keepalived/health-check.sh nginx"
     interval 2
     weight -20
-    fall 2
-    rise 1
+    fall 3
+    rise 2
 }
 
 vrrp_script chk_app_health {
@@ -29,6 +29,7 @@ vrrp_instance VI_APP {
     virtual_router_id {{ network.vrrp_vid }}
     priority {{ network.vrrp_priority_primary if inventory_hostname == groups['app_nodes'][0] else network.vrrp_priority_standby }}
     advert_int 1
+    preempt_delay 30
 
     authentication {
         auth_type PASS
@@ -58,8 +59,8 @@ vrrp_script chk_postgres {
     script "/etc/keepalived/health-check.sh postgres"
     interval 2
     weight -20
-    fall 2
-    rise 1
+    fall 3
+    rise 2
 }
 
 vrrp_instance VI_DB {
@@ -68,6 +69,7 @@ vrrp_instance VI_DB {
     virtual_router_id {{ network.vrrp_vid + 1 }}
     priority {{ network.vrrp_priority_primary if postgresql_role | default('') == 'primary' else network.vrrp_priority_standby }}
     advert_int 1
+    preempt_delay 30
     nopreempt
 
     authentication {
