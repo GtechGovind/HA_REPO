@@ -18,9 +18,17 @@
     state: absent
   loop:
     - /etc/keepalived/keepalived.conf
+    - /etc/keepalived/keepalived-app.conf
+    - /etc/keepalived/keepalived-db.conf
     - /etc/keepalived/health-check.sh
     - /etc/keepalived/notify.sh
   when: infra_reinstall
+
+- name: Create keepalived script user
+  user:
+    name: keepalived_script
+    system: yes
+    shell: /sbin/nologin
 
 - name: Configure keepalived configuration
   template:
@@ -50,11 +58,21 @@
     mode: '0755'
   notify: restart keepalived
 
-- name: Create keepalived script user
-  user:
-    name: keepalived_script
-    system: yes
-    shell: /sbin/nologin
+- name: Ensure Keepalived log file exists with proper permissions
+  file:
+    path: /var/log/keepalived.log
+    state: touch
+    owner: keepalived_script
+    group: root
+    mode: '0644'
+  changed_when: false
+
+- name: Configure Keepalived syslog options
+  lineinfile:
+    path: /etc/default/keepalived
+    regexp: '^KEEPALIVED_OPTIONS='
+    line: 'KEEPALIVED_OPTIONS="-D -S 6"'
+  notify: restart keepalived
 
 - name: Enable and start keepalived
   systemd:
@@ -67,3 +85,12 @@
   debug:
     msg: "Keepalived service is running: {{ keepalived_service.changed or 'running' in (keepalived_service.status.ActiveState | default('')) }}"
   when: keepalived_service is defined and keepalived_service.status is defined
+
+- name: Verify Keepalived VIP assignment
+  shell: "ip addr show | grep -E '{{ network.app_vip }}|{{ network.db_vip }}' || true"
+  register: vip_check
+  changed_when: false
+
+- name: Show VIP assignment status
+  debug:
+    msg: "Assigned VIPs on {{ inventory_hostname }}: {{ vip_check.stdout_lines }}"

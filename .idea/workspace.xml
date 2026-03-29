@@ -4,7 +4,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4e5b88f0-7383-45f3-a30a-4b5b1413df28" name="Changes" comment="Added pre-firewall SSH allow rule to ensure safe access during firewall enablement." />
+    <list default="true" id="4e5b88f0-7383-45f3-a30a-4b5b1413df28" name="Changes" comment="Refined Nginx and Prometheus setup: adjusted conditional installation of VTS module and exporter, improved cleanup tasks, and updated exporter scrape endpoint.">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ha-infrastructure/roles/keepalived/tasks/main.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/ha-infrastructure/roles/keepalived/tasks/main.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ha-infrastructure/roles/keepalived/templates/keepalived-app.conf.j2" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ha-infrastructure/roles/keepalived/templates/keepalived-db.conf.j2" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ha-infrastructure/roles/keepalived/templates/keepalived.conf.j2" beforeDir="false" afterPath="$PROJECT_DIR$/src/ha-infrastructure/roles/keepalived/templates/keepalived.conf.j2" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ha-infrastructure/scripts/failover-notify.sh" beforeDir="false" afterPath="$PROJECT_DIR$/src/ha-infrastructure/scripts/failover-notify.sh" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -175,7 +182,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1774703992131</updated>
-      <workItem from="1774703993136" duration="22571000" />
+      <workItem from="1774703993136" duration="24099000" />
     </task>
     <task id="LOCAL-00001" summary="Refactored HA infrastructure requirements and production inventory file for improved clarity, reusability, and scalability">
       <option name="closed" value="true" />
@@ -529,15 +536,29 @@
       <option name="project" value="LOCAL" />
       <updated>1774729894327</updated>
     </task>
-    <option name="localTasksCounter" value="45" />
+    <task id="LOCAL-00045" summary="Added conditional installation and configuration for Nginx VTS module and adjusted Prometheus exporter setup accordingly.">
+      <option name="closed" value="true" />
+      <created>1774730415467</created>
+      <option name="number" value="00045" />
+      <option name="presentableId" value="LOCAL-00045" />
+      <option name="project" value="LOCAL" />
+      <updated>1774730415467</updated>
+    </task>
+    <task id="LOCAL-00046" summary="Refined Nginx and Prometheus setup: adjusted conditional installation of VTS module and exporter, improved cleanup tasks, and updated exporter scrape endpoint.">
+      <option name="closed" value="true" />
+      <created>1774730551067</created>
+      <option name="number" value="00046" />
+      <option name="presentableId" value="LOCAL-00046" />
+      <option name="project" value="LOCAL" />
+      <updated>1774730551067</updated>
+    </task>
+    <option name="localTasksCounter" value="47" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Enabled reinstallation and cleanup flags for infrastructure tasks in production environment." />
-    <MESSAGE value="Removed redundant condition for directory creation in PostgreSQL role." />
     <MESSAGE value="Removed redundant `when` conditions for improved task clarity and consistency across PostgreSQL roles." />
     <MESSAGE value="Created PostgreSQL data and WAL directories during primary role setup with strict permissions to ensure proper initialization" />
     <MESSAGE value="Refactored PostgreSQL service management: standardized use of cluster-specific services, added service file fixes, enabled reinstallation tasks, and improved clarity in task conditions." />
@@ -561,6 +582,8 @@
     <MESSAGE value="Integrated advanced monitoring and failover features: revamped Keepalived configuration with role-specific logic, introduced LokI setup for log aggregation, enhanced Prometheus exporters and dashboards with additional metrics, updated `when` clauses for consistency, and enabled detailed PostgreSQL health checks and replication monitoring." />
     <MESSAGE value="Refined service status checks and task conditions across roles: updated debug messages for consistent parenthesis usage, adjusted `when` clause syntax" />
     <MESSAGE value="Added pre-firewall SSH allow rule to ensure safe access during firewall enablement." />
-    <option name="LAST_COMMIT_MESSAGE" value="Added pre-firewall SSH allow rule to ensure safe access during firewall enablement." />
+    <MESSAGE value="Added conditional installation and configuration for Nginx VTS module and adjusted Prometheus exporter setup accordingly." />
+    <MESSAGE value="Refined Nginx and Prometheus setup: adjusted conditional installation of VTS module and exporter, improved cleanup tasks, and updated exporter scrape endpoint." />
+    <option name="LAST_COMMIT_MESSAGE" value="Refined Nginx and Prometheus setup: adjusted conditional installation of VTS module and exporter, improved cleanup tasks, and updated exporter scrape endpoint." />
   </component>
 </project>

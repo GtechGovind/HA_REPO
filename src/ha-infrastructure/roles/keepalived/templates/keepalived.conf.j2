@@ -2,6 +2,8 @@ global_defs {
     enable_script_security
     script_user keepalived_script
     router_id LVS_{{ inventory_hostname }}
+    log_facility 6
+    log_level info
 }
 
 {% if inventory_hostname in groups.get('app_nodes', []) %}
@@ -61,7 +63,7 @@ vrrp_instance VI_DB {
     interface {{ ansible_default_ipv4.interface | default('eth0') }}
     state BACKUP
     virtual_router_id {{ network.vrrp_vid + 1 }}
-    priority {{ network.vrrp_priority_primary if postgresql_role == 'primary' else network.vrrp_priority_standby }}
+    priority {{ network.vrrp_priority_primary if postgresql_role | default('') == 'primary' else network.vrrp_priority_standby }}
     advert_int 1
     nopreempt
 

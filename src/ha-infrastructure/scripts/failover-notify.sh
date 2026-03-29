@@ -11,11 +11,18 @@
 WEBHOOK_URL="${FAILOVER_WEBHOOK_URL:-https://hooks.slack.com/services/YOUR/WEBHOOK/URL}"
 
 notify_failover() {
-    local node_name=$(hostname)
+    local node_name
+    node_name=$(hostname)
     local event_type="$1"
-    local message="[$(date '+%Y-%m-%d %H:%M:%S')] ALERT: Database failover event '$event_type' detected on $node_name"
+    local log_file="/var/log/keepalived.log"
+    local message
+    message="[$(date '+%Y-%m-%d %H:%M:%S')] ALERT: Keepalived state transition to '$event_type' detected on $node_name"
 
-    echo "$message"
+    # Log to local file
+    echo "$message" >> "$log_file"
+    
+    # Log to syslog
+    logger -t keepalived-notify "$message"
     
     if [[ -n "$WEBHOOK_URL" && "$WEBHOOK_URL" != "https://hooks.slack.com/services/YOUR/WEBHOOK/URL" ]]; then
         curl -X POST -H 'Content-type: application/json' --data "{\"text\":\"$message\"}" "$WEBHOOK_URL"
